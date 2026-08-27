@@ -311,7 +311,7 @@
     <div class="top-tab-content active" id="tab-shield">
     <div class="stepper">
       <div class="step cur" id="s1" onclick="go(1)">1 &middot; Live alert</div>
-      <div class="step" id="s2" onclick="go(2)">2 &middot; Weekly review</div>
+      <div class="step" id="s2" onclick="go(2)">2 &middot; Daily review</div>
       <div class="step" id="s3" onclick="go(3)">3 &middot; Threat &amp; defense</div>
       <div class="step" id="s4" onclick="go(4)">4 &middot; Approve response</div>
       <div class="step" id="s5" onclick="go(5)">5 &middot; What happens next</div>
@@ -342,21 +342,21 @@
             <p style="margin-top:10px"><b>Defense brief ready for your review.</b></p>
             <div class="action-row">
               <div class="action-btn primary" onclick="go(3)">Open defense brief</div>
-              <div class="action-btn" onclick="go(2)">View weekly summary</div>
+              <div class="action-btn" onclick="go(2)">View daily summary</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ==================== STAGE 2: WEEKLY REVIEW EMAIL ==================== -->
+    <!-- ==================== STAGE 2: DAILY REVIEW EMAIL ==================== -->
     <div class="stage" id="stage2">
-      <p style="color:var(--dim);font-size:13px;margin-bottom:14px">Every Monday morning, Rania also receives a weekly email summarizing all threats Shield detected and the owner's defense posture.</p>
+      <p style="color:var(--dim);font-size:13px;margin-bottom:14px">Every morning, Rania also receives a daily email summarizing all threats Shield detected and the owner's defense posture.</p>
 
       <div class="email">
         <div class="email-header">
           <div class="from">From: Asset Nova: Shield (no-reply@shield.assetnova.io)</div>
-          <div class="subj">&#128737; Weekly Claims Defense Report &mdash; 1 active threat, 2 monitored</div>
+          <div class="subj">&#128737; Daily Claims Defense Report &mdash; 1 active threat, 2 monitored</div>
           <div class="meta">To: rania.khalid@owner-pmo.sa &middot; Monday 25 Aug 2026, 08:45 &middot; Jubail Gas Processing Expansion</div>
         </div>
         <div class="email-body">
@@ -443,7 +443,7 @@
       </div>
       <div class="btnrow">
         <button class="primary" onclick="go(4)">See defense response &rarr;</button>
-        <button onclick="go(2)">&larr; Weekly review</button>
+        <button onclick="go(2)">&larr; Daily review</button>
       </div>
     </div>
 
