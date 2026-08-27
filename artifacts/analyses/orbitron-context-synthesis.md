@@ -1,6 +1,6 @@
 # Orbitron Context Synthesis — for Asset Nova Case Study
 
-Source: context-library/research/Orbitron/ (website captures, founder LinkedIn posts, NovaOS product screenshot). Analyzed 2026-08-26.
+Source: context-library/research/Orbitron/ (website captures, founder LinkedIn posts, NovaOS product screenshot). Analyzed 2026-08-27.
 
 ## 1. Asset Nova already exists on their roadmap
 
@@ -40,13 +40,13 @@ The case study will be judged against these beliefs:
 ## 6. Other signals
 
 - Nav includes **"Glass Box"** and **"Trust Centre"** — transparency/auditability is core brand.
-- Regions: USA, Europe, UAE, **KSA**, India → Aramco is squarely in the wedge.
+- Regions: USA, Europe, UAE, **KSA**, India → MENA megaproject owners (Aramco, ADNOC, QatarEnergy, PIF giga-projects) are squarely in the wedge.
 - SuperHive by AI71 (construction intelligence) saved as reference — likely a competitor/inspiration to study.
 
 ## 7. What this means for the case study
 
-1. **Position Asset Nova as the third NovaOS product**: CPM-specific agents (cost estimation, schedule risk, claims/contracts, O&M) composed with FlowNova (procurement, logistics, control tower) and ComplyNova (permits, HSE compliance, audit evidence) in NovaStudio.
+1. **Position Shield as the first Asset Nova wedge**: an owner-side claims defense agent that reads every document on a megaproject, detects incoming contractor claims, finds weaknesses in the contractor's position, and drafts the defense. Composed with FlowNova (procurement, logistics) and ComplyNova (audit evidence, compliance) in NovaStudio. Future horizons: Design Gate (H2, FEED validation) and Budget Red Team (H3, FID forecasting).
 2. **Demo style must be agent-native, not SaaS**: agents render views on demand, propose actions, humans approve at gates. Avoid presenting "a dashboard product."
 3. **Bake governance in**: every agent in the demo has an owner, a defined scope, an escalation path, and a value metric. Answering Ashu's three questions unprompted = strong hire signal.
-4. **GTM**: outcome-based commercial model (they already do "ROI guaranteed"), MENA-first (Aramco/NEOM-type giga-projects, KSA as beachhead), sovereign/on-prem deployment option.
-5. **Wow moment**: show the delay-cascade or compliance-gap scenario where Asset Nova orchestrates FlowNova + ComplyNova agents live — proving the platform compounding story, not a point solution.
+4. **GTM**: outcome-based commercial model (they already do "ROI guaranteed"), MENA-first (Aramco, ADNOC, QatarEnergy, PIF giga-projects), sovereign/on-prem deployment option.
+5. **Wow moment**: show Shield detecting a $42M incoming contractor claim, finding 3 weaknesses in the contractor's position, and drafting the owner's defense — before the notice deadline expires. Proves the platform compounding story (document ingestion substrate serves all three horizons), not a point solution.
