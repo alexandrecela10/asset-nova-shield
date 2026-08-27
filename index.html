@@ -659,10 +659,10 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
         <p style="font-size:12.5px;color:var(--dim);margin-bottom:8px">Every node has a testable quality gate. The eval suite runs on a golden set of confirmed events.</p>
         <div class="sd-eval-grid">
           <div class="sd-eval">
-            <h4><span class="pill llm">LLM</span> Threat detection precision</h4>
-            <div class="sd-target" style="color:var(--green)">Target: 85%</div>
-            <p>False alarms destroy trust. Precision over recall.</p>
-            <div class="sd-test"><b style="color:var(--txt)">Test:</b> 50 site reports from closed project. Expert labeled 8 real threats, 42 non-events. Agent must flag the 8 without more than 1-2 false alarms.</div>
+            <h4><span class="pill llm">LLM</span> Threat detection recall</h4>
+            <div class="sd-target" style="color:var(--green)">Target: 100% recall; maximize precision progressively</div>
+            <p>Missing a real threat is unacceptable. False alarms are tolerable early and reduced over time through the self-improving loop.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> 50 site reports from closed project. Expert labeled 8 real threats, 42 non-events. Agent must flag all 8. Precision starts at whatever level catches them all, then improves as dispositions accumulate.</div>
           </div>
           <div class="sd-eval">
             <h4><span class="pill code">Code</span> Citation accuracy</h4>
@@ -731,7 +731,7 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
         <table class="sd-recap-table">
           <tr><th>Step</th><th>Input</th><th>Output</th><th>Who</th><th>Eval gate</th></tr>
           <tr><td><b>1. Ingest</b></td><td>6 raw files, 5 systems</td><td>Indexed record with provenance</td><td style="color:var(--green)">Code</td><td>Parse coverage 100%</td></tr>
-          <tr><td><b>2. Detect</b></td><td>Baseline + field reports</td><td>EV-047 threat, 96% confidence</td><td style="color:var(--purple)">LLM</td><td>Precision &ge;85%</td></tr>
+          <tr><td><b>2. Detect</b></td><td>Baseline + field reports</td><td>EV-047 threat, 96% confidence</td><td style="color:var(--purple)">LLM</td><td>Recall 100%</td></tr>
           <tr><td><b>3. Map contract</b></td><td>GC 4.12 + Amendment 2</td><td>21-day bar (not 28), clause refs</td><td style="color:var(--purple)">LLM</td><td>Expert agreement &ge;80%</td></tr>
           <tr><td><b>4. Deadlines</b></td><td>Date anchors</td><td>Contractor bar expired, 6 days left</td><td style="color:var(--green)">Code</td><td>Accuracy = 100%</td></tr>
           <tr><td><b>5. Evidence</b></td><td>Chronology + letters</td><td>EP-047: 6 docs, 3 defense advantages</td><td><span style="color:var(--purple)">LLM</span> + <span style="color:var(--green)">Code</span></td><td>Citation accuracy &ge;99.5%</td></tr>
