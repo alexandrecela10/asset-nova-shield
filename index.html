@@ -30,9 +30,15 @@
   .context-bar .sep{color:var(--line)}
   .context-bar .uc{color:var(--accent);font-weight:600}
 
-  .layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 124px)}
+  .layout{display:grid;grid-template-columns:0px 1fr;height:calc(100vh - 124px);transition:grid-template-columns .3s ease}
+  .layout.panel-open{grid-template-columns:280px 1fr}
 
-  .pipeline{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow-y:auto}
+  .pipeline{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;min-width:0}
+  .layout:not(.panel-open) .pipeline{border-right:none}
+
+  .panel-toggle{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:10;background:var(--panel2);border:1px solid var(--line);border-left:none;border-radius:0 8px 8px 0;padding:8px 4px;cursor:pointer;color:var(--dim);font-size:14px;transition:left .3s ease}
+  .layout.panel-open .panel-toggle{left:280px}
+  .panel-toggle:hover{color:var(--txt);background:var(--panel)}
   .pipe-section{padding:12px 14px;border-bottom:1px solid var(--line)}
   .pipe-section h3{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .pipe-section h3 .icon{font-size:12px}
@@ -263,8 +269,8 @@
   <div class="top-tab" onclick="switchTopTab('built')">How This Was Built</div>
 </div>
 
-<div class="layout">
-
+<div class="layout" id="layout" style="position:relative">
+  <div class="panel-toggle" onclick="togglePanel()" id="panelToggle" title="Show project details">&#9654;</div>
   <div class="pipeline">
     <div class="pipe-section">
       <h3><span class="icon">&#8615;</span> What the agent reads (inputs)</h3>
@@ -840,6 +846,14 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
 </div>
 
 <script>
+function togglePanel(){
+  var l=document.getElementById('layout');
+  var b=document.getElementById('panelToggle');
+  l.classList.toggle('panel-open');
+  var open=l.classList.contains('panel-open');
+  b.innerHTML=open?'\u25C0':'\u25B6';
+  b.title=open?'Hide project details':'Show project details';
+}
 function switchTopTab(tab){
   document.querySelectorAll('.top-tab').forEach((t,i)=>{
     const tabs=['shield','system','built'];
