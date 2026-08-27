@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Nova: Shield — Agentic System Design (Early-Stage Proposal)</title>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#11161f; --panel2:#161d29; --line:#1f2937;
+    --txt:#e5eaf2; --dim:#8b95a7; --faint:#5b6474;
+    --accent:#4f8ef7; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --purple:#a78bfa; --cyan:#22d3ee;
+    --mono:'SF Mono',ui-monospace,Menlo,monospace;
+    --sans:-apple-system,'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);overflow:hidden}
+  .slide{display:none;position:absolute;inset:0;padding:44px 64px 56px;flex-direction:column;overflow-y:auto}
+  .slide.active{display:flex;animation:fade .45s}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  h1{font-size:46px;line-height:1.1;font-weight:700;letter-spacing:-.5px}
+  h2{font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-.3px;margin-bottom:14px}
+  h2 em{font-style:normal;color:var(--accent)}
+  .sub{font-size:16px;color:var(--dim);margin-top:12px;line-height:1.5;max-width:900px}
+  .body{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .foot{position:absolute;bottom:16px;left:64px;right:64px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .nav-hint{position:fixed;bottom:16px;right:20px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .progress{position:fixed;top:0;left:0;height:2px;background:var(--accent);transition:width .3s;z-index:10}
+  .green{color:var(--green)} .amber{color:var(--amber)} .red{color:var(--red)} .purple{color:var(--purple)} .cyan{color:var(--cyan)}
+
+  .ito{display:flex;gap:14px;align-items:stretch}
+  .ito .box{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column}
+  .ito .box.in{border-left:3px solid var(--cyan)}
+  .ito .box.th{border-left:3px solid var(--purple)}
+  .ito .box.ev{border-left:3px solid var(--amber)}
+  .ito .box.out{border-left:3px solid var(--green)}
+  .ito .box.act{border-left:3px solid var(--red)}
+  .ito .tag{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+  .ito .in .tag{color:var(--cyan)} .ito .th .tag{color:var(--purple)} .ito .out .tag{color:var(--green)} .ito .ev .tag{color:var(--amber)} .ito .act .tag{color:var(--red)}
+  .ito .arrow{align-self:center;font-size:20px;color:var(--faint);flex-shrink:0}
+  .ito p,.ito li{font-size:12.5px;color:var(--dim);line-height:1.5}
+  .ito ul{padding-left:14px}
+  .ito b{color:var(--txt)}
+  pre.src{font-family:var(--mono);font-size:11px;line-height:1.45;color:var(--dim);background:#0d1420;border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow:auto;white-space:pre-wrap;margin-top:6px}
+  pre.src b{color:var(--amber);font-weight:600}
+  pre.src i{font-style:normal;color:var(--green)}
+  .fileref{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:auto;padding-top:8px}
+  .pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;margin-right:6px;font-weight:600}
+  .pill.llm{background:#1a1a3a;color:var(--purple);border:1px solid #2a2860}
+  .pill.code{background:#0d2a1e;color:var(--green);border:1px solid #1a4a3a}
+  .pill.human{background:#2a2010;color:var(--amber);border:1px solid #4a3818}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--dim);line-height:1.4;vertical-align:top}
+  td b{color:var(--txt)}
+  .callout{border-left:3px solid var(--amber);background:var(--panel);border-radius:0 10px 10px 0;padding:10px 16px;font-size:13px;color:var(--dim);line-height:1.5;margin-top:14px;max-width:1000px}
+  .callout b{color:var(--txt)}
+  .design-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .design-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .design-card h4{font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .design-card p{font-size:11.5px;color:var(--dim);line-height:1.45}
+  .eval-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+  .eval-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .eval-card h4{font-size:12px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .eval-card .target{font-family:var(--mono);font-size:20px;font-weight:700;margin:6px 0}
+  .eval-card p{font-size:11px;color:var(--dim);line-height:1.4}
+  .eval-card .method{font-size:10px;color:var(--faint);margin-top:6px;font-family:var(--mono)}
+  .dag{display:flex;gap:8px;margin-top:14px;align-items:stretch}
+  .dag .node{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center;position:relative}
+  .dag .node h5{font-size:11px;margin-bottom:3px}
+  .dag .node p{font-size:10px;color:var(--dim)}
+  .dag .node.llm{border-color:#2a2860}.dag .node.code{border-color:#1a4a3a}.dag .node.human{border-color:#4a3818}
+  .dag .arrow{align-self:center;color:var(--faint);font-size:16px;flex-shrink:0}
+  .demo-link{display:inline-block;margin-top:16px;background:var(--accent);color:#fff;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px}
+  @media print{
+    @page{size:338.7mm 190.5mm;margin:0}
+    html,body{overflow:visible;height:auto}
+    .slide{display:flex !important;position:relative;inset:auto;width:338.7mm;height:190.5mm;page-break-after:always;animation:none}
+    .nav-hint,.progress{display:none}
+    .foot{position:absolute}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+
+<!-- 1 · TITLE -->
+<section class="slide">
+  <div class="body">
+    <div class="kicker">Asset Nova: Shield &middot; Agentic system design &middot; Early-stage proposal</div>
+    <h1>How Shield defends the owner's profit</h1>
+    <p class="sub">The full agentic pipeline: inputs, system design, quality gates, and outputs. Demonstrated on a synthetic scenario: contractor building a $42.3M claim against the owner on the Jubail Gas Processing Expansion.</p>
+    <p class="sub" style="font-size:13px;color:var(--amber);margin-top:16px;border-left:3px solid var(--amber);padding-left:12px">This is an early-stage proposal. The actual system design will be validated and refined through test-and-learn iterations on real project data, starting with Phase 0 backtests on closed projects.</p>
+    <p class="sub" style="font-size:13px;color:var(--faint);margin-top:12px">Synthetic data in <span style="font-family:var(--mono)">outputs/prototypes/synthetic-data/</span>. Companion to the <a href="commercial-guardian-demo.html" style="color:var(--accent)">live interactive prototype</a>.</p>
+  </div>
+  <div class="foot"><span>Asset Nova: Shield — agentic system design — early-stage proposal</span><span>Alexandre Cela &middot; August 2026</span></div>
+</section>
+
+<!-- 2 · AGENTIC SYSTEM DESIGN OVERVIEW -->
+<section class="slide">
+  <div class="kicker">System design</div>
+  <h2>A deterministic DAG, not an autonomous loop</h2>
+  <p class="sub" style="margin-top:0;margin-bottom:14px">Shield is a directed acyclic graph (DAG) pipeline where each node has a defined input, output, and quality gate. The LLM is used where language understanding is the problem. Code is used where being wrong is unrecoverable. Humans approve every external action.</p>
+  <div class="dag">
+    <div class="node code"><h5>1. Ingest</h5><p>Parse &amp; index</p><span class="pill code">code</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node llm"><h5>2. Detect</h5><p>Find threats</p><span class="pill llm">LLM</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node llm"><h5>3. Map contract</h5><p>Find clauses</p><span class="pill llm">LLM</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node code"><h5>4. Deadlines</h5><p>Date math</p><span class="pill code">code</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node llm"><h5>5. Evidence</h5><p>Build chain</p><span class="pill llm">LLM</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node llm"><h5>6. Draft</h5><p>Write response</p><span class="pill llm">LLM</span></div>
+    <div class="arrow">&rarr;</div>
+    <div class="node human"><h5>7. Human gate</h5><p>Approve</p><span class="pill human">human</span></div>
+  </div>
+  <div class="design-grid">
+    <div class="design-card">
+      <h4><span class="pill llm">LLM</span> Judgment tasks</h4>
+      <p>Threat detection, clause interpretation, evidence linking, response drafting. The LLM reads and reasons across thousands of documents where pattern matching across unstructured text is the core challenge.</p>
+    </div>
+    <div class="design-card">
+      <h4><span class="pill code">Code</span> Deterministic tasks</h4>
+      <p>Document parsing, deadline computation, citation verification. These use rules engines and date math. An LLM never computes a date or fabricates a document reference. Every output is auditable and reproducible.</p>
+    </div>
+    <div class="design-card">
+      <h4><span class="pill human">Human</span> Decision tasks</h4>
+      <p>Defense strategy, response approval, claim valuation. The agent surfaces evidence and drafts, but the human owns the decision. Nothing leaves the system without a named approver's sign-off.</p>
+    </div>
+  </div>
+  <div class="callout"><b>Why a DAG, not an agent loop?</b> Predictable execution order. Each node's output is testable independently. If detection improves, evidence and drafting don't regress. The governance kernel wraps every node: scope check, action allowlist, audit log.</div>
+  <div class="foot"><span>System design</span><span>DAG &gt; agent loop for high-stakes workflows</span></div>
+</section>
+
+<!-- 3 · INPUTS -->
+<section class="slide">
+  <div class="kicker">Inputs</div>
+  <h2>The project record the agent reads</h2>
+  <div class="body">
+    <table>
+      <tr><th>Source system</th><th>Document type</th><th>What Shield extracts</th><th>Synthetic file</th></tr>
+      <tr><td><b>Contract repo</b></td><td>EPC Agreement + amendments</td><td>Clauses, obligations, notice deadlines, amendment changes</td><td>01-contract-extract-gc-4.12.md</td></tr>
+      <tr><td><b>Document control</b></td><td>Geotechnical baseline report</td><td>Ground conditions baseline per area (the "expected" state)</td><td>02-geotech-baseline-extract.md</td></tr>
+      <tr><td><b>Aconex</b></td><td>Daily site reports</td><td>Field observations, production rates, incidents (the "actual" state)</td><td>03-daily-reports-area7.md</td></tr>
+      <tr><td><b>Aconex / email</b></td><td>Letters + meeting minutes</td><td>Contractor positions, owner responses, informal reservations</td><td>04-correspondence-log.md</td></tr>
+      <tr><td><b>Primavera P6</b></td><td>Schedule exports (XER)</td><td>Activity delays, float changes, critical path impact</td><td>05-schedule-extract-p6.csv</td></tr>
+      <tr><td><b>Cost system</b></td><td>Change register</td><td>What's been logged vs what hasn't &mdash; <b class="red">Area 7 event absent</b></td><td>06-change-register.csv</td></tr>
+    </table>
+    <div class="callout"><b>The core problem:</b> no single system contains the full picture. The contract, the ground truth, the letters, the schedule, and the register each hold one fragment. Today a human assembles this by hand, if at all. Shield reads them all continuously.</div>
+  </div>
+  <div class="foot"><span>Inputs</span><span>read-only ingestion, no ERP integration required</span></div>
+</section>
+
+<!-- 4 · STEP 1-2: INGEST + DETECT -->
+<section class="slide">
+  <div class="kicker">Pipeline &middot; Steps 1-2</div>
+  <h2>Ingest the record, detect threats to the owner's profit</h2>
+  <div class="body">
+    <div class="ito">
+      <div class="box in"><span class="tag">Inputs</span>
+        <pre class="src">DR-1042 &middot; 04 Aug 2026 &middot; Area 7
+"Piling rig PR-07 refusal at <b>2.1 m</b>
+on pile group E13."
+
+GBR 5.3.4: "Rippable material anticipated
+to minimum depth of <i>6.5 m</i> in Area 7."</pre>
+        <span class="fileref">03-daily-reports-area7.md &middot; 02-geotech-baseline-extract.md</span>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box th"><span class="tag">Processing</span>
+        <ul>
+          <li>Parse and index every document with file + section provenance</li>
+          <li>LLM pairs baseline statements with field observations per area</li>
+          <li>Tests materiality: rock at 2.1m vs 6.5m baseline, 60% of corridor affected</li>
+          <li>Checks the change register: <b class="red">no record covers Area 7 ground conditions</b></li>
+          <li>Conclusion: contractor has grounds for a claim the owner needs to defend against</li>
+        </ul>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box out"><span class="tag">Output</span>
+        <pre class="src">THREAT DETECTED: EV-047
+type: incoming_claim_risk
+area: Area 7, grids E12-E22
+basis: rock at 2.1m vs 6.5m baseline
+in_change_register: <b>false</b>
+owner_defense_needed: <i>true</i>
+confidence: 96%</pre>
+      </div>
+    </div>
+    <div class="callout"><b>Why this wasn't caught:</b> the geotech team saw the reports, the commercial team owns the register. The signal crossed a team boundary &mdash; exactly where threats go unnoticed.</div>
+  </div>
+  <div class="foot"><span>Steps 1-2 &middot; Ingest + Detect</span><span>the 1 threat among 3 watch items this week</span></div>
+</section>
+
+<!-- 5 · STEP 3-4: MAP CONTRACT + DEADLINES -->
+<section class="slide">
+  <div class="kicker">Pipeline &middot; Steps 3-4</div>
+  <h2>Find the governing clause, compute deadlines with code</h2>
+  <div class="body">
+    <div class="ito">
+      <div class="box in"><span class="tag">Inputs</span>
+        <pre class="src">GC 4.12(b): "Formal notice shall be given
+no later than <b>28 days</b> after awareness..."
+
+Amendment 2 (14 Mar 2026): "28 days"
+replaced with "<b>21 days</b>" for Areas 6-8.</pre>
+        <span class="fileref">01-contract-extract-gc-4.12.md</span>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box th"><span class="tag">Processing</span>
+        <ul>
+          <li><span class="pill llm">LLM</span> Retrieves clauses matching event type, applies amendments in date order</li>
+          <li><span class="pill llm">LLM</span> Extracts obligations: contractor's notice bar and owner's response rights</li>
+          <li><span class="pill code">Code</span> Computes deadlines from extracted date anchors:</li>
+        </ul>
+        <pre class="src">contractor_deadline = 04 Aug + 21d = <b>25 Aug</b>
+owner_response     = 04 Aug + 28d = <b>01 Sep</b>
+days_remaining     = 01 Sep - 26 Aug = <b>6</b></pre>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box out"><span class="tag">Output</span>
+        <pre class="src">governing: GC 4.12(b) as amended
+contractor_bar: 21d <i>(not 28 &mdash; caught!)</i>
+contractor_deadline: <b>EXPIRED 25 Aug</b>
+owner_response_deadline: 01 Sep (6 days)
+defense_advantage: contractor may have
+  missed their own amended deadline</pre>
+      </div>
+    </div>
+    <div class="callout"><b>The amendment catch is the key moment.</b> A team working from the base contract assumes 28 days. Shield reads Amendment 2 and knows the real deadline is 21 days. The contractor may already be time-barred. <b>Deadline math is always code, never LLM.</b></div>
+  </div>
+  <div class="foot"><span>Steps 3-4 &middot; Contract mapping + Deadlines</span><span>LLM reads the clause, code computes the date</span></div>
+</section>
+
+<!-- 6 · STEP 5-6: EVIDENCE + DEFENSE DRAFT -->
+<section class="slide">
+  <div class="kicker">Pipeline &middot; Steps 5-6</div>
+  <h2>Build the defense evidence, draft the owner's response</h2>
+  <div class="body">
+    <div class="ito">
+      <div class="box in"><span class="tag">Inputs</span>
+        <pre class="src">C-1187 (08 Aug): "We reserve our rights
+regarding ground conditions in Area 7...
+A detailed submission will follow."
+<b>No particulars, no records attached.</b></pre>
+        <span class="fileref">04-correspondence-log.md + evidence from steps 1-4</span>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box th"><span class="tag">Processing</span>
+        <ul>
+          <li><span class="pill llm">LLM</span> Assembles chronology and scores each document for/against the owner</li>
+          <li><span class="pill llm">LLM</span> Judges C-1187: bare reservation, does NOT satisfy formal notice requirement</li>
+          <li><span class="pill code">Code</span> Verifies every citation resolves to an actual source document</li>
+          <li><span class="pill llm">LLM</span> Drafts owner's defense response pointing out procedural flaws</li>
+        </ul>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box out"><span class="tag">Outputs</span>
+        <pre class="src">EVIDENCE PACK EP-047 (6 items, verified)
+ 1. GBR baseline 6.5m (supports contractor)
+ 2. DR-1042 rock at 2.1m (supports contr.)
+ 3. C-1187 <i>insufficient as notice (DEFENSE)</i>
+ 4. Amd 2: 21d bar <i>(DEFENSE &mdash; may be expired)</i>
+ 5. P6 U26: 54d delay <i>unsubstantiated (DEF.)</i>
+ 6. Change register: event absent
+
+DRAFT: Owner response letter JGX-OWN-0047
+  &mdash; every sentence cites its source</pre>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Steps 5-6 &middot; Evidence + Draft</span><span>defense positions are tagged, not just listed</span></div>
+</section>
+
+<!-- 7 · STEP 7: HUMAN GATE + ACTIONS -->
+<section class="slide">
+  <div class="kicker">Pipeline &middot; Step 7</div>
+  <h2>Human approves. Then three downstream actions trigger.</h2>
+  <div class="body">
+    <div class="ito">
+      <div class="box in"><span class="tag">Input</span>
+        <p>Defense response draft + evidence pack + impact estimates, presented to Rania Khalid, Contracts Lead.</p>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box th"><span class="tag">Human review</span>
+        <ul>
+          <li>Reviewer opens each cited source, edits the draft, or rejects with a reason</li>
+          <li>Defense strategy and claim valuation are <b>human decisions</b></li>
+          <li>Every action logged to the audit trail</li>
+        </ul>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="box act"><span class="tag">Actions triggered</span>
+        <pre class="src">1. <b>Defense letter sent</b> to contractor
+   (JGX-OWN-0047, with EP-047 attached)
+
+2. <b>Evidence compilation</b>
+   6 docs assembled, mapped to audit trail
+
+3. <b>Financial impact analysis</b>
+   Pause steel order &rarr; saves $1.8M
+
+4. <b>Schedule validation</b>
+   9 challenge questions for contractor
+
+5. <b>Stewardship brief</b>
+   for PMO Director, rendered on demand</pre>
+      </div>
+    </div>
+    <div class="callout"><b>The governance kernel</b> wraps every node in the pipeline: scope check (is this within the registered project?), action allowlist (what can each agent do?), audit log (append-only), and sovereignty tag (data never leaves the customer's environment).</div>
+  </div>
+  <div class="foot"><span>Step 7 &middot; Human gate + Actions</span><span>governance is a feature, not a disclaimer</span></div>
+</section>
+
+<!-- 8 · EVALS & QUALITY GATES -->
+<section class="slide">
+  <div class="kicker">Quality gates</div>
+  <h2>How we know it works &mdash; evals at every layer</h2>
+  <p class="sub" style="margin-top:0;margin-bottom:8px">Every node in the pipeline has a testable quality gate. The eval suite runs on a golden set of confirmed events. No update ships unless it passes all gates on the expanded golden set.</p>
+  <div class="eval-grid">
+    <div class="eval-card">
+      <h4><span class="pill llm">LLM</span> Threat detection precision</h4>
+      <div class="target green">Target: 85%</div>
+      <p>False alarms destroy trust. Precision is the primary metric, not recall. Better to miss a low-value event than to flood the team with noise.</p>
+      <div class="method">Method: expert-labeled events on closed projects. Backtest before live.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> feed the agent 50 site reports from a closed project. An expert already labeled 8 real threats and 42 non-events. Does the agent flag the 8 threats without flagging more than 1-2 false alarms?</p>
+    </div>
+    <div class="eval-card">
+      <h4><span class="pill code">Code</span> Citation accuracy</h4>
+      <div class="target green">Target: 99.5%</div>
+      <p>Every citation in a draft must resolve to an actual document, section, and page. Deterministic verifier checks after LLM generates.</p>
+      <div class="method">Method: automated resolver. Every cite is a lookup, not a generation.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> agent drafts a response citing "Clause 4.12, p.88". The verifier opens the contract file, goes to p.88, and confirms Clause 4.12 exists there. If the page or clause is wrong, the citation fails.</p>
+    </div>
+    <div class="eval-card">
+      <h4><span class="pill code">Code</span> Deadline accuracy</h4>
+      <div class="target green">Target: 100%</div>
+      <p>Date math is code, never LLM. An error here means a missed deadline and lost rights. Zero tolerance.</p>
+      <div class="method">Method: unit tests on anchor extraction + date arithmetic.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> event date = 4 Aug, contract says "21 days", Amendment 2 overrides to "14 days for Areas 6-8". Expected deadline: 18 Aug. Does the code pick up the amendment and compute 18 Aug, not 25 Aug?</p>
+    </div>
+    <div class="eval-card">
+      <h4><span class="pill llm">LLM</span> Hallucination in drafts</h4>
+      <div class="target green">Target: 0 in approved outputs</div>
+      <p>Every sentence in a draft must trace back to a source document. Citation verifier catches fabricated references. Human review catches fabricated reasoning.</p>
+      <div class="method">Method: citation resolver + human gate. Double barrier.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> agent writes "as stated in letter C-1205 dated 15 Aug". Verifier checks: does C-1205 exist? Is it dated 15 Aug? If the letter doesn't exist or the date is wrong, the draft is blocked before anyone sees it.</p>
+    </div>
+    <div class="eval-card">
+      <h4><span class="pill llm">LLM</span> Defense position accuracy</h4>
+      <div class="target amber">Target: 80% agreement with expert</div>
+      <p>Shield's "owner advantage" vs "supports contractor" tagging on each document must match what an expert claims consultant would say.</p>
+      <div class="method">Method: expert review on closed-project backtests. Calibrate before live.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> give the agent 6 documents from a resolved dispute. An expert tagged 3 as "owner advantage" and 3 as "supports contractor". Does the agent agree on at least 5 of 6? Where it disagrees, is the reasoning defensible?</p>
+    </div>
+    <div class="eval-card">
+      <h4><span class="pill human">Human</span> Draft approval rate</h4>
+      <div class="target amber">Target: 70% approved with minor/no edits</div>
+      <p>If the team rewrites most drafts, the agent isn't learning their style. Edit diffs feed the self-improving loop. Approval rate should trend up over time.</p>
+      <div class="method">Method: tracked via disposition log. Weekly calibration.</div>
+      <p style="margin-top:8px;font-size:10.5px;color:var(--cyan);border-top:1px solid var(--line);padding-top:6px"><b style="color:var(--txt)">Example test:</b> after 4 weeks, count: of the last 20 drafts, how many did Rania approve as-is or with small wording changes? If less than 14 of 20 (70%), the drafting model needs retuning on her team's style.</p>
+    </div>
+  </div>
+  <div class="callout"><b>Kill criteria:</b> if detection precision stays below 60% after 8 weeks of tuning, or the team stops reviewing for 4 consecutive weeks, pause deployment and return to backtest mode. <b>These thresholds are initial hypotheses</b> — they will be calibrated through Phase 0 backtesting on real project data.</div>
+  <div class="foot"><span>Evals &amp; quality gates</span><span>every node testable independently</span></div>
+</section>
+
+<!-- 9 · SELF-IMPROVING LOOP -->
+<section class="slide">
+  <div class="kicker">Self-improvement</div>
+  <h2>Gets smarter on <em>your</em> project, without your data leaving</h2>
+  <div class="body">
+    <div class="dag" style="margin-top:8px">
+      <div class="node llm"><h5>Agent flags threat</h5><p>Detection + evidence + draft</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node human"><h5>Human reviews</h5><p>Approve, edit, or dismiss</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node code"><h5>Decision logged</h5><p>Labeled example in audit trail</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node llm"><h5>Agent retunes</h5><p>Thresholds, templates, golden set</p></div>
+    </div>
+    <div class="design-grid" style="margin-top:16px">
+      <div class="design-card">
+        <h4 class="amber">Dismissals reduce noise</h4>
+        <p>When the team dismisses a false alarm, Shield raises its threshold for that pattern. Fewer irrelevant flags over time.</p>
+      </div>
+      <div class="design-card">
+        <h4 class="accent" style="color:var(--accent)">Edits sharpen drafts</h4>
+        <p>When the team rewrites a response before sending, the edit diff is captured. Draft quality improves to match how the team actually writes.</p>
+      </div>
+      <div class="design-card">
+        <h4 class="green">Approvals confirm what matters</h4>
+        <p>Confirmed events grow the golden eval set. No update ships unless it passes on all confirmed events. The test suite gets harder over time.</p>
+      </div>
+    </div>
+    <div class="callout"><b>Full sovereignty:</b> all retraining happens inside the customer's environment (in-region VPC or on-prem). Dispositions never leave. Your project data never improves someone else's agent. No shared model, no data export, no cross-tenant learning. Guaranteed via NovaOS.</div>
+  </div>
+  <div class="foot"><span>Self-improving loop</span><span>your data stays yours &mdash; the agent gets better only on your projects</span></div>
+</section>
+
+<!-- 10 · RECAP -->
+<section class="slide">
+  <div class="kicker">End-to-end recap</div>
+  <h2>Input &rarr; processing &rarr; eval &rarr; output &rarr; action</h2>
+  <div class="body">
+    <table>
+      <tr><th>Step</th><th>Input</th><th>Output</th><th>Who</th><th>Eval gate</th></tr>
+      <tr><td><b>1. Ingest</b></td><td>6 raw files, 5 systems</td><td>Indexed record with provenance</td><td class="green">Code</td><td>Parse coverage 100%</td></tr>
+      <tr><td><b>2. Detect</b></td><td>Baseline + field reports</td><td>EV-047 threat, 96% confidence</td><td class="purple">LLM</td><td>Precision &ge;85%</td></tr>
+      <tr><td><b>3. Map contract</b></td><td>GC 4.12 + Amendment 2</td><td>21-day bar (not 28), clause refs</td><td class="purple">LLM</td><td>Expert agreement &ge;80%</td></tr>
+      <tr><td><b>4. Deadlines</b></td><td>Date anchors</td><td>Contractor bar expired, 6 days left</td><td class="green">Code</td><td>Accuracy = 100%</td></tr>
+      <tr><td><b>5. Evidence</b></td><td>Chronology + letters</td><td>EP-047: 6 docs, 3 defense advantages</td><td class="purple">LLM + <span class="green">Code</span></td><td>Citation accuracy &ge;99.5%</td></tr>
+      <tr><td><b>6. Draft</b></td><td>EP-047 + defense positions</td><td>Owner response letter, every sentence cited</td><td class="purple">LLM</td><td>0 hallucinations, 70% approval</td></tr>
+      <tr><td><b>7. Human gate</b></td><td>Draft + evidence</td><td>Approved response, audit trail, 5 actions</td><td class="amber">Human</td><td>Named approver required</td></tr>
+    </table>
+    <div class="callout">Open the synthetic files, follow any output back to its source line, and re-run the date math by hand. <b>That auditability is the product.</b></div>
+    <a class="demo-link" href="commercial-guardian-demo.html" target="_blank">&#9654; See it live in the prototype</a>
+  </div>
+  <div class="foot"><span>Recap</span><span>Asset Nova: Shield</span></div>
+</section>
+
+<div class="nav-hint">&larr; &rarr; navigate &middot; F fullscreen</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let cur=0;
+function show(n){if(n<0||n>=slides.length)return;slides[cur].classList.remove('active');cur=n;slides[cur].classList.add('active');
+document.getElementById('prog').style.width=((cur+1)/slides.length*100)+'%';}
+const m=location.hash.match(/slide=(\d+)/);const st=m?Math.min(+m[1],slides.length-1):0;
+slides[st].classList.add('active');cur=st;document.getElementById('prog').style.width=((st+1)/slides.length*100)+'%';
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')show(cur+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')show(cur-1);
+  else if(e.key==='Home')show(0);
+  else if(e.key==='f'||e.key==='F')document.documentElement.requestFullscreen?.();
+});
+document.addEventListener('click',e=>{if(e.target.closest('a'))return;show(cur+1)});
+</script>
+</body>
+</html>

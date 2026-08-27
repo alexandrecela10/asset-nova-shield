@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Nova: Shield — Interactive Prototype</title>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#11161f; --panel2:#161d29; --line:#1f2937;
+    --txt:#e5eaf2; --dim:#8b95a7; --faint:#5b6474;
+    --accent:#4f8ef7; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+    --purple:#a78bfa; --cyan:#22d3ee;
+    --mono:'SF Mono',ui-monospace,Menlo,monospace;
+    --sans:-apple-system,'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;overflow:hidden;height:100vh}
+
+  .top{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .logo{font-weight:700;letter-spacing:.5px}.logo span{color:var(--accent)}
+  .crumb{color:var(--dim);font-size:12.5px}
+  .badge{font-size:11px;padding:2px 8px;border-radius:10px;background:#1a2333;color:var(--accent);border:1px solid #24344f}
+  .top .right{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--dim)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+
+  .context-bar{display:flex;align-items:center;gap:20px;padding:8px 18px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:12px;color:var(--dim)}
+  .context-bar .persona{display:flex;align-items:center;gap:8px}
+  .context-bar .avatar{width:24px;height:24px;border-radius:50%;background:#2a3548;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--txt)}
+  .context-bar .sep{color:var(--line)}
+  .context-bar .uc{color:var(--accent);font-weight:600}
+
+  .layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 124px)}
+
+  .pipeline{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow-y:auto}
+  .pipe-section{padding:12px 14px;border-bottom:1px solid var(--line)}
+  .pipe-section h3{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .pipe-section h3 .icon{font-size:12px}
+  .pipe-item{display:flex;align-items:center;gap:8px;padding:5px 6px;font-size:11.5px;color:var(--dim);border-radius:5px;margin-bottom:2px}
+  .pipe-item .ct{font-family:var(--mono);font-size:10px;color:var(--faint);margin-left:auto;white-space:nowrap}
+  .pipe-item .dot-sm{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .pipe-item .dot-sm.green{background:var(--green)}.pipe-item .dot-sm.amber{background:var(--amber)}
+  .pipe-item .dot-sm.blue{background:var(--accent)}.pipe-item .dot-sm.purple{background:var(--purple)}
+
+  .output-card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:11px;cursor:pointer;transition:border-color .2s}
+  .output-card:hover{border-color:var(--accent)}
+  .output-card .head{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+  .output-card .sev{font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700}
+  .output-card .sev.crit{background:var(--red);color:#fff}
+  .output-card .sev.watch{background:#3a2f1a;color:var(--amber)}
+  .output-card .title{font-weight:600;color:var(--txt);font-size:11px}
+  .output-card p{color:var(--dim);font-size:10.5px;line-height:1.4}
+
+  .main{overflow-y:auto;padding:20px 26px}
+  .stage{display:none}.stage.active{display:block;animation:fade .5s}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .stepper{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap}
+  .step{font-size:11px;padding:5px 12px;border-radius:14px;border:1px solid var(--line);color:var(--faint);cursor:pointer;transition:all .2s}
+  .step.cur{background:var(--accent);border-color:var(--accent);color:#fff}
+  .step.done{color:var(--green);border-color:#1d3b30}
+  .step:hover{border-color:var(--accent)}
+
+  /* Slack/Teams notification */
+  .notif{max-width:520px;background:#1a1d24;border:1px solid #2e3340;border-radius:12px;overflow:hidden;font-size:13px}
+  .notif-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#22252e;border-bottom:1px solid #2e3340;font-size:11px;color:#9ea5b4}
+  .notif-bar .app-icon{width:18px;height:18px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .notif-bar .channel{color:#c9cdd6;font-weight:600}
+  .notif-body{padding:14px 16px}
+  .notif-body .bot-name{font-weight:700;color:#c9cdd6;font-size:13px;display:flex;align-items:center;gap:6px}
+  .notif-body .bot-name .app-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:#2a3548;color:var(--accent);font-weight:600}
+  .notif-body .msg{color:#b0b7c3;margin-top:8px;line-height:1.65;font-size:13px}
+  .notif-body .msg b{color:#e0e4ea}
+  .notif-body .threat-box{background:#2a1a1a;border:1px solid #4a2020;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12px;color:var(--red)}
+  .notif-body .threat-box b{color:#ff9b9b}
+  .notif-body .action-row{display:flex;gap:8px;margin-top:10px}
+  .notif-body .action-btn{font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid #3a4050;background:#2a2e38;color:#c9cdd6;cursor:pointer;font-weight:600}
+  .notif-body .action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* Email */
+  .email{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0;max-width:640px;overflow:hidden}
+  .email-header{padding:14px 18px;border-bottom:1px solid var(--line);font-size:12px}
+  .email-header .from{color:var(--accent);font-weight:600}
+  .email-header .subj{color:var(--txt);font-weight:700;font-size:14px;margin-top:6px}
+  .email-header .meta{color:var(--faint);font-size:11px;margin-top:4px}
+  .email-body{padding:16px 18px;font-size:13px;color:var(--dim);line-height:1.7}
+  .email-body .highlight{border-left:3px solid var(--red);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:12px}
+  .email-body .highlight.threat{background:#1a1010;color:var(--dim)}
+  .email-body .highlight.defense{background:#0d1a12;border-left-color:var(--green);color:var(--dim)}
+  .email-body .highlight b.red{color:var(--red)}.email-body .highlight b.green{color:var(--green)}
+  .email-body .summary-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+  .email-body .summary-table td{padding:6px 8px;border-bottom:1px solid var(--line)}
+  .email-body .summary-table td:first-child{color:var(--faint);width:160px}
+  .email-body .summary-table td:last-child{color:var(--txt)}
+
+  .alert-card{background:linear-gradient(135deg,#1a0a07,#140d10);border:1px solid #4a1616;border-radius:12px;padding:20px 22px;margin-bottom:18px}
+  .alert-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .sev-badge{background:var(--red);color:#fff;font-weight:700;font-size:11px;padding:3px 9px;border-radius:6px}
+  .alert-head h2{font-size:17px}
+  .kpis{display:flex;gap:26px;margin:14px 0 6px;flex-wrap:wrap}
+  .kpi b{display:block;font-size:22px;font-family:var(--mono)}
+  .kpi i{font-style:normal;font-size:11px;color:var(--dim)}
+  .kpi .warn{color:var(--red)}.kpi .money{color:var(--amber)}
+  .kpi .good{color:var(--green)}
+
+  .section-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin:20px 0 10px}
+  .chain{position:relative;padding-left:22px}
+  .chain::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1.5px;background:var(--line)}
+  .doc{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:default}
+  .doc::before{content:'';position:absolute;left:-19px;top:16px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+  .doc .meta{display:flex;gap:10px;font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-bottom:5px;flex-wrap:wrap}
+  .doc .meta .src{color:var(--cyan)}
+  .doc p{font-size:12.5px;color:var(--dim);line-height:1.5}
+  .doc mark{background:#2b2410;color:var(--amber);padding:0 3px;border-radius:3px}
+  .doc mark.defense{background:#0d2a18;color:var(--green)}
+  .doc.clause::before{background:var(--purple)}
+  .doc .verdict{font-size:11px;margin-top:4px;padding:4px 8px;border-radius:5px;display:inline-block}
+  .doc .verdict.owner{background:#0d2a18;color:var(--green);border:1px solid #1a4a30}
+  .doc .verdict.risk{background:#2a1a0a;color:var(--amber);border:1px solid #4a3418}
+
+  .btnrow{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  button{font-family:var(--sans);font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);cursor:pointer;transition:all .2s}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:#3b7ded}
+  button:hover{border-color:var(--accent)}
+
+  .defense-brief{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;font-size:13px;line-height:1.7;color:var(--dim);max-width:760px}
+  .defense-brief h4{color:var(--txt);margin-bottom:12px;font-size:14px}
+  .defense-brief .cite{font-family:var(--mono);font-size:10.5px;color:var(--cyan);background:#0d1b22;border:1px solid #143240;padding:1px 6px;border-radius:5px;white-space:nowrap}
+  .approval{display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:14px;max-width:760px;font-size:12.5px}
+  .avatar-lg{width:30px;height:30px;border-radius:50%;background:#2a3548;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+  .canvas{position:relative;background:radial-gradient(circle at 30% 20%,#0e1420,#0a0e14);border:1px solid var(--line);border-radius:14px;height:380px;overflow:hidden}
+  .grid-bg{position:absolute;inset:0;background-image:radial-gradient(#1a2333 1px,transparent 1px);background-size:26px 26px;opacity:.5}
+  .node{position:absolute;width:210px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 13px;opacity:.35;transition:all .6s}
+  .node.on{opacity:1;border-color:var(--accent);box-shadow:0 0 24px rgba(79,142,247,.15)}
+  .node.done{opacity:1;border-color:var(--green)}
+  .node h5{font-size:12.5px;display:flex;align-items:center;gap:7px}
+  .node .tag{font-size:9px;padding:1px 6px;border-radius:5px;background:#1a2333;color:var(--dim);margin-left:auto}
+  .node p{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.45}
+  .node .status{font-family:var(--mono);font-size:10px;margin-top:7px;color:var(--faint)}
+  .node.on .status{color:var(--accent)}.node.done .status{color:var(--green)}
+  svg.wires{position:absolute;inset:0;pointer-events:none}
+  svg.wires path{stroke:#243146;stroke-width:1.5;fill:none;transition:stroke .5s}
+  svg.wires path.live{stroke:var(--accent);stroke-dasharray:6 5;animation:flow 1s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-11}}
+
+  .output-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .output-box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .output-box h5{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--faint);margin-bottom:6px}
+  .output-box .val{font-size:14px;font-weight:700;margin-bottom:4px}
+  .output-box p{font-size:11px;color:var(--dim);line-height:1.4}
+
+  .gov{display:flex;gap:14px;margin-top:16px;flex-wrap:wrap}
+  .gov .g{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:11.5px;color:var(--dim)}
+  .gov .g b{display:block;color:var(--txt);font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+
+  /* Top-level tabs */
+  .top-tabs{display:flex;gap:0;padding:0 18px;border-bottom:1px solid var(--line);background:var(--panel2)}
+  .top-tab{font-size:13px;font-weight:600;padding:12px 22px;color:var(--faint);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.2px}
+  .top-tab:hover{color:var(--dim)}
+  .top-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .top-tab-content{display:none}.top-tab-content.active{display:block}
+
+  /* System Design tab styles */
+  .sd-section{margin-bottom:28px}
+  .sd-section h3{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-.2px}
+  .sd-callout{border-left:3px solid var(--amber);background:var(--panel);border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:20px}
+  .sd-callout b{color:var(--txt)}
+  .sd-dag{display:flex;gap:6px;margin:12px 0;align-items:stretch;flex-wrap:wrap}
+  .sd-dag .sd-node{flex:1;min-width:80px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:center}
+  .sd-dag .sd-node h5{font-size:11px;margin-bottom:2px}
+  .sd-dag .sd-node p{font-size:9.5px;color:var(--dim)}
+  .sd-dag .sd-node.llm{border-color:#2a2860}.sd-dag .sd-node.code{border-color:#1a4a3a}.sd-dag .sd-node.human{border-color:#4a3818}
+  .sd-dag .sd-arrow{align-self:center;color:var(--faint);font-size:14px;flex-shrink:0}
+  .sd-ito{display:flex;gap:10px;align-items:stretch;margin:10px 0}
+  .sd-ito .sd-box{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--dim);line-height:1.5}
+  .sd-ito .sd-box b{color:var(--txt)}
+  .sd-ito .sd-box.in{border-left:3px solid var(--cyan)}
+  .sd-ito .sd-box.proc{border-left:3px solid var(--purple)}
+  .sd-ito .sd-box.out{border-left:3px solid var(--green)}
+  .sd-ito .sd-arrow{align-self:center;color:var(--faint);font-size:14px;flex-shrink:0}
+  .sd-ito .sd-tag{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+  .sd-ito .in .sd-tag{color:var(--cyan)}.sd-ito .proc .sd-tag{color:var(--purple)}.sd-ito .out .sd-tag{color:var(--green)}
+  .sd-ito pre.sd-src{font-family:var(--mono);font-size:10px;line-height:1.4;color:var(--dim);background:#0d1420;border:1px solid var(--line);border-radius:6px;padding:6px 8px;white-space:pre-wrap;margin-top:4px}
+  .sd-ito pre.sd-src b{color:var(--amber)}.sd-ito pre.sd-src i{font-style:normal;color:var(--green)}
+  .sd-eval-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+  .sd-eval{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .sd-eval h4{font-size:11.5px;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+  .sd-eval .sd-target{font-family:var(--mono);font-size:16px;font-weight:700;margin:4px 0}
+  .sd-eval p{font-size:10.5px;color:var(--dim);line-height:1.4}
+  .sd-eval .sd-test{font-size:10px;color:var(--cyan);margin-top:5px;border-top:1px solid var(--line);padding-top:5px}
+  .sd-loop{display:flex;gap:6px;margin:10px 0;align-items:stretch}
+  .sd-loop .sd-lnode{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:center}
+  .sd-loop .sd-lnode h5{font-size:11px;margin-bottom:2px}
+  .sd-loop .sd-lnode p{font-size:9.5px;color:var(--dim)}
+  .sd-loop .sd-arrow{align-self:center;color:var(--faint);font-size:14px;flex-shrink:0}
+  .sd-loop-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+  .sd-loop-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .sd-loop-card h4{font-size:11.5px;margin-bottom:4px}
+  .sd-loop-card p{font-size:10.5px;color:var(--dim);line-height:1.4}
+  .sd-recap-table{width:100%;border-collapse:collapse;font-size:11.5px;margin:10px 0}
+  .sd-recap-table th{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}
+  .sd-recap-table td{padding:5px 8px;border-bottom:1px solid var(--line);color:var(--dim);line-height:1.35;vertical-align:top}
+  .sd-recap-table td b{color:var(--txt)}
+  .pill{display:inline-block;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
+  .pill.llm{background:#1a1a3a;color:var(--purple);border:1px solid #2a2860}
+  .pill.code{background:#0d2a1e;color:var(--green);border:1px solid #1a4a3a}
+  .pill.human{background:#2a2010;color:var(--amber);border:1px solid #4a3818}
+
+  /* How This Was Built tab styles */
+  .htb-section{margin-bottom:24px}
+  .htb-section h3{font-size:16px;font-weight:700;margin-bottom:12px;letter-spacing:-.2px}
+  .htb-group{margin-bottom:16px}
+  .htb-group h4{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+  .htb-list{list-style:none;padding:0}
+  .htb-list li{padding:6px 10px;font-size:12.5px;color:var(--dim);border-left:2px solid var(--line);margin-bottom:4px;line-height:1.5}
+  .htb-list li b{color:var(--txt)}
+  .htb-skill{display:flex;gap:10px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--dim);line-height:1.5;align-items:baseline}
+  .htb-skill code{font-family:var(--mono);font-size:11px;color:var(--accent);background:#1a2333;padding:1px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+  .htb-callout{border-left:3px solid var(--accent);background:var(--panel);border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:var(--dim);line-height:1.6;margin-top:16px}
+  .htb-callout b{color:var(--txt)}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#04110b;font-weight:600;padding:12px 18px;border-radius:10px;transform:translateY(80px);opacity:0;transition:all .5s;z-index:60}
+  .toast.show{transform:none;opacity:1}
+
+  .overlay{position:fixed;inset:0;background:rgba(4,7,12,.72);display:none;align-items:center;justify-content:center;z-index:50}
+  .overlay.show{display:flex;animation:fade .3s}
+  .brief{width:720px;max-height:82vh;overflow-y:auto;background:var(--panel);border:1px solid var(--accent);border-radius:14px;padding:24px 28px;box-shadow:0 0 60px rgba(79,142,247,.2)}
+  .brief .ephemeral{display:inline-block;font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1a2e;border:1px solid #2e2846;padding:2px 8px;border-radius:6px;margin-bottom:12px}
+  .brief h4{font-size:15px;margin-bottom:4px}
+  .brief .sub{font-size:11.5px;color:var(--faint);margin-bottom:14px}
+  .brief table{border-collapse:collapse;width:100%;font-size:12px;margin-bottom:14px}
+  .brief td{padding:7px 9px;border-bottom:1px solid var(--line);color:var(--dim)}
+  .brief td b{color:var(--txt)}
+  .brief .typing{font-size:12.5px;color:var(--dim);line-height:1.65;border-top:1px solid var(--line);padding-top:12px;min-height:120px;white-space:pre-wrap}
+  .brief .cursor{display:inline-block;width:7px;height:13px;background:var(--accent);animation:pulse 1s infinite;vertical-align:-2px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">&#9670; Asset <span>Nova</span>: Shield</div>
+  <span class="crumb">Jubail Gas Processing Expansion &middot; $4.8B &middot; EPC Package 3</span>
+  <span class="badge">Built on NovaOS</span>
+  <div class="right"><span><span class="dot"></span>Agent running</span><span>Sovereign VPC &middot; MENA</span></div>
+</div>
+
+<div class="context-bar">
+  <div class="persona">
+    <div class="avatar">RK</div>
+    <span><b style="color:var(--txt)">Rania Khalid</b> &middot; Contracts Lead, Owner PMO</span>
+  </div>
+  <span class="sep">|</span>
+  <span class="uc">Profit Protection &middot; Claims Defense</span>
+  <span class="sep">|</span>
+  <span>Use case: detect incoming contractor claims early, prepare the owner's defense before deadlines expire</span>
+</div>
+
+<div class="top-tabs">
+  <div class="top-tab active" onclick="switchTopTab('shield')">Shield Demo</div>
+  <div class="top-tab" onclick="switchTopTab('system')">System Design</div>
+  <div class="top-tab" onclick="switchTopTab('built')">How This Was Built</div>
+</div>
+
+<div class="layout">
+
+  <div class="pipeline">
+    <div class="pipe-section">
+      <h3><span class="icon">&#8615;</span> What the agent reads (inputs)</h3>
+      <div class="pipe-item"><span class="dot-sm green"></span>Contracts + amendments<span class="ct">Rev 4</span></div>
+      <div class="pipe-item"><span class="dot-sm green"></span>Letters &amp; correspondence<span class="ct">Aconex</span></div>
+      <div class="pipe-item"><span class="dot-sm green"></span>Project schedule<span class="ct">P6 XER</span></div>
+      <div class="pipe-item"><span class="dot-sm green"></span>Daily &amp; weekly site reports<span class="ct">1,204 new</span></div>
+      <div class="pipe-item"><span class="dot-sm green"></span>Meeting minutes<span class="ct">WPM-31</span></div>
+    </div>
+    <div class="pipe-section">
+      <h3><span class="icon">&#9881;</span> What the agent does (processing)</h3>
+      <div class="pipe-item"><span class="dot-sm blue"></span>Detects threats to owner profit<span class="ct">LLM</span></div>
+      <div class="pipe-item"><span class="dot-sm blue"></span>Assesses contractor claim validity<span class="ct">LLM</span></div>
+      <div class="pipe-item"><span class="dot-sm blue"></span>Finds defense evidence<span class="ct">LLM</span></div>
+      <div class="pipe-item"><span class="dot-sm purple"></span>Verifies every citation<span class="ct">code</span></div>
+      <div class="pipe-item"><span class="dot-sm purple"></span>Computes contract deadlines<span class="ct">code</span></div>
+      <div class="pipe-item"><span class="dot-sm blue"></span>Drafts defense briefs<span class="ct">LLM</span></div>
+    </div>
+    <div class="pipe-section">
+      <h3><span class="icon">&#9888;</span> Quality checks (before any output)</h3>
+      <div class="pipe-item"><span class="dot-sm purple"></span>Citation accuracy<span class="ct">99.5%</span></div>
+      <div class="pipe-item"><span class="dot-sm purple"></span>Deadline accuracy<span class="ct">100%</span></div>
+      <div class="pipe-item"><span class="dot-sm blue"></span>Threat confidence scoring<span class="ct">96%</span></div>
+      <div class="pipe-item"><span class="dot-sm amber"></span>Human approval required<span class="ct">always</span></div>
+    </div>
+    <div class="pipe-section">
+      <h3><span class="icon">&#8614;</span> Threats detected this week</h3>
+      <div class="output-card" onclick="go(3)" style="border-color:var(--red)">
+        <div class="head"><span class="sev crit">THREAT</span><span class="title">EV-047 &middot; $42.3M claim forming</span></div>
+        <p>Contractor building a claim for unexpected rock in Area 7. Their formal notice deadline is in 6 days. Defense brief ready.</p>
+      </div>
+      <div class="output-card">
+        <div class="head"><span class="sev watch">WATCH</span><span class="title">Compressor vendor delay</span></div>
+        <p>Contractor may argue force majeure. Monitoring vendor correspondence.</p>
+      </div>
+      <div class="output-card">
+        <div class="head"><span class="sev watch">WATCH</span><span class="title">PA-19 unbooked cost trend</span></div>
+        <p>Contractor's payment application references costs not in the change register. Potential claim seed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-tab-content active" id="tab-shield">
+    <div class="stepper">
+      <div class="step cur" id="s1" onclick="go(1)">1 &middot; Live alert</div>
+      <div class="step" id="s2" onclick="go(2)">2 &middot; Weekly review</div>
+      <div class="step" id="s3" onclick="go(3)">3 &middot; Threat &amp; defense</div>
+      <div class="step" id="s4" onclick="go(4)">4 &middot; Approve response</div>
+      <div class="step" id="s5" onclick="go(5)">5 &middot; What happens next</div>
+    </div>
+
+    <!-- ==================== STAGE 1: LIVE ALERT (TEAMS/SLACK) ==================== -->
+    <div class="stage active" id="stage1">
+      <p style="color:var(--dim);font-size:13px;margin-bottom:14px">When Shield detects an urgent threat to the owner's profit, it sends an immediate alert to the contracts team's channel. This one arrived on a Thursday afternoon, 6 days before the contractor's notice deadline expires.</p>
+
+      <div class="notif">
+        <div class="notif-bar">
+          <div class="app-icon">S</div>
+          <span class="channel">#jubail-claims-defense</span>
+          <span style="margin-left:auto">Thursday 21 Aug 2026, 14:32</span>
+        </div>
+        <div class="notif-body">
+          <div class="bot-name">Asset Nova: Shield <span class="app-tag">APP</span></div>
+          <div class="msg">
+            <div class="threat-box">
+              <b>&#9888; Incoming claim threat detected &mdash; $42.3M exposure</b><br><br>
+              A contractor claim is forming against the owner on <b>Area 7 pipe rack foundations</b>. The contractor hit unexpected rock during excavation and has sent an informal letter reserving their rights. They are building toward a formal claim for <b>$42.3M in extra cost and schedule delay</b>.<br><br>
+              <b>Why this is urgent:</b> The contract gives the contractor <b style="color:#ff9b9b">21 days to file a formal notice</b>. If they file it correctly, they can claim. If they miss the deadline or file incorrectly, <b style="color:#ff9b9b">the owner is protected</b>. The deadline is in <b style="color:#ff9b9b">6 days</b>.
+            </div>
+            <p style="margin-top:8px"><b>Shield found 3 weaknesses</b> in the contractor's position:</p>
+            <p>1. Their informal letter (C-1187) does NOT satisfy the formal notice requirement</p>
+            <p>2. Amendment 2 shortened the deadline from 28 to 21 days &mdash; the contractor may not know</p>
+            <p>3. The schedule delay they'll claim (54 days) is not yet substantiated in the P6 narrative</p>
+            <p style="margin-top:10px"><b>Defense brief ready for your review.</b></p>
+            <div class="action-row">
+              <div class="action-btn primary" onclick="go(3)">Open defense brief</div>
+              <div class="action-btn" onclick="go(2)">View weekly summary</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STAGE 2: WEEKLY REVIEW EMAIL ==================== -->
+    <div class="stage" id="stage2">
+      <p style="color:var(--dim);font-size:13px;margin-bottom:14px">Every Monday morning, Rania also receives a weekly email summarizing all threats Shield detected and the owner's defense posture.</p>
+
+      <div class="email">
+        <div class="email-header">
+          <div class="from">From: Asset Nova: Shield (no-reply@shield.assetnova.io)</div>
+          <div class="subj">&#128737; Weekly Claims Defense Report &mdash; 1 active threat, 2 monitored</div>
+          <div class="meta">To: rania.khalid@owner-pmo.sa &middot; Monday 25 Aug 2026, 08:45 &middot; Jubail Gas Processing Expansion</div>
+        </div>
+        <div class="email-body">
+          <p>Hi Rania,</p>
+          <p style="margin-top:8px">Shield reviewed <b style="color:var(--txt)">1,204 new documents</b> this week. Here is the owner's claims defense status:</p>
+
+          <div class="highlight threat">
+            <b class="red">&#9888; ACTIVE THREAT &mdash; Response needed by 30 Aug</b><br>
+            <b>EV-047:</b> Contractor is building a <b>$42.3M claim</b> for unexpected rock in Area 7. They sent an informal letter but have not filed a formal notice yet. Shield found 3 weaknesses in their position. Defense brief is ready for your approval.
+          </div>
+
+          <div class="highlight defense">
+            <b class="green">&#10003; Owner's defense position: STRONG</b><br>
+            The contractor's informal letter does not satisfy notice requirements. Amendment 2 shortened the deadline from 28 to 21 days. Their schedule impact is unsubstantiated. If they miss the deadline or file incorrectly, the owner owes nothing.
+          </div>
+
+          <table class="summary-table">
+            <tr><td>Threat exposure</td><td><b style="color:var(--red)">$42.3M</b> (contractor claim forming)</td></tr>
+            <tr><td>Contractor deadline</td><td><b style="color:var(--amber)">30 Aug 2026</b> (6 days) &mdash; if missed, claim is barred</td></tr>
+            <tr><td>Defense weaknesses found</td><td><b style="color:var(--green)">3 procedural flaws</b> in contractor's position</td></tr>
+            <tr><td>Defense brief</td><td>Ready for your review and approval</td></tr>
+          </table>
+
+          <p style="margin-top:8px"><b style="color:var(--txt)">Also monitoring:</b> compressor vendor delay (potential force majeure argument) and PA-19 unbooked costs (possible claim seed).</p>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" onclick="go(3)">Review threat &amp; defense &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ==================== STAGE 3: THREAT & DEFENSE ASSESSMENT ==================== -->
+    <div class="stage" id="stage3">
+      <div class="alert-card">
+        <div class="alert-head">
+          <span class="sev-badge">THREAT</span>
+          <h2>Contractor building a $42.3M claim against the owner</h2>
+        </div>
+        <p style="color:var(--dim);font-size:13px;line-height:1.6">
+          Excavation crews hit rock 2.3m higher than the ground survey predicted in Area 7. The contractor incurred extra drilling costs and schedule delays.
+          They sent an informal letter reserving their rights and are preparing a formal claim for <b style="color:var(--red)">$42.3M</b> against the owner.
+          Shield assessed the contractor's position and found <b style="color:var(--green)">3 weaknesses the owner can use to defend</b>.
+        </p>
+        <div class="kpis">
+          <div class="kpi"><b class="warn">$42.3M</b><i>contractor's claim amount</i></div>
+          <div class="kpi"><b class="money">6 days</b><i>until contractor's notice deadline</i></div>
+          <div class="kpi"><b class="good">Strong</b><i>owner's defense position</i></div>
+          <div class="kpi"><b>96%</b><i>confidence score</i></div>
+        </div>
+      </div>
+
+      <div class="section-title">Evidence chain &mdash; what the contractor will argue, and where their position is weak</div>
+      <div class="chain">
+        <div class="doc clause">
+          <div class="meta"><span class="src">CONTRACT &middot; Clause 4.12</span><span>EPC Agreement Rev 4 &middot; p.88</span></div>
+          <p>"...the Contractor shall give notice to the Owner <mark>within twenty-one (21) days</mark> of encountering physical conditions... failing which the Contractor <mark>shall not be entitled</mark> to additional cost or time."</p>
+          <div class="verdict owner">&#10003; Owner advantage: Amendment 2 shortened this from 28 to 21 days. The contractor may still be working off the original 28-day window.</div>
+        </div>
+        <div class="doc">
+          <div class="meta"><span class="src">DAILY SITE REPORT &middot; DR-2210</span><span>04 Aug 2026 &middot; Area 7</span></div>
+          <p>"Excavation crews stopped at grid E7-E9. <mark>Rock encountered at approx. 2.1m</mark>, rig refusal on 3 piles. Awaiting instruction."</p>
+          <div class="verdict risk">Supports contractor: documents the unforeseen condition on site</div>
+        </div>
+        <div class="doc">
+          <div class="meta"><span class="src">GROUND SURVEY &middot; Geotechnical Report</span><span>FEED package &middot; Appendix C &middot; p.214</span></div>
+          <p>"Weathered rock horizon anticipated at <mark>4.5m below grade</mark> across Areas 6-8 (boreholes BH-112 to BH-131)."</p>
+          <div class="verdict risk">Supports contractor: clear gap between predicted (4.5m) and actual (2.1m) rock level</div>
+        </div>
+        <div class="doc">
+          <div class="meta"><span class="src">LETTER &middot; C-1187</span><span>08 Aug 2026 &middot; Contractor &#8594; Owner</span></div>
+          <p>"...we advise of unforeseen ground conditions in Area 7 and <mark>reserve our rights</mark>... revised methodology under assessment."</p>
+          <div class="verdict owner">&#10003; Owner advantage: this is an informal reservation. It does NOT satisfy the formal notice requirement under Clause 4.12. If the contractor relies on this letter as their notice, their claim is procedurally deficient.</div>
+        </div>
+        <div class="doc">
+          <div class="meta"><span class="src">SCHEDULE CHANGE &middot; P6 Update 26</span><span>Jul &#8594; Aug comparison</span></div>
+          <p>Activities A7-2210 to A7-2265 <mark>delayed by 54 days</mark>. Pipe rack path went from 21 days of float to <mark>12 days behind schedule</mark>.</p>
+          <div class="verdict owner">&#10003; Owner advantage: the schedule change was not explained in the narrative. The contractor cannot substantiate the 54-day delay without documenting the cause.</div>
+        </div>
+        <div class="doc">
+          <div class="meta"><span class="src">MEETING MINUTES &middot; WPM-31</span><span>12 Aug 2026 &middot; Weekly progress meeting</span></div>
+          <p>"Contractor raised Area 7 ground conditions. Owner PM requested <mark>'formal substantiation'</mark>. No event logged in change register as of 22 Aug."</p>
+          <div class="verdict owner">&#10003; Owner advantage: the owner already asked for formal substantiation. The contractor has not provided it. This strengthens the procedural defense.</div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" onclick="go(4)">See defense response &rarr;</button>
+        <button onclick="go(2)">&larr; Weekly review</button>
+      </div>
+    </div>
+
+    <!-- ==================== STAGE 4: APPROVE DEFENSE RESPONSE ==================== -->
+    <div class="stage" id="stage4">
+      <div class="section-title">Defense response &mdash; prepared by the agent, sent only after human approval</div>
+      <p style="color:var(--dim);font-size:12.5px;margin-bottom:14px">Shield drafted a response letter to the contractor that acknowledges the site condition while protecting the owner's position. Every sentence links to its source document.</p>
+
+      <div class="defense-brief">
+        <h4>OWNER'S RESPONSE TO CONTRACTOR RESERVATION &mdash; AREA 7 GROUND CONDITIONS <span style="float:right;font-family:var(--mono);font-size:10px;color:var(--faint)">REF: JGX-OWN-0047 &middot; DRAFT v1</span></h4>
+        <p>We acknowledge receipt of your letter C-1187 dated 08 August 2026 <span class="cite">C-1187</span> regarding ground conditions encountered in Area 7.</p>
+        <p style="margin-top:10px">We note that your letter constitutes an informal reservation of rights and <b style="color:var(--txt)">does not satisfy the formal notice requirements</b> set out in Clause 4.12 of the EPC Agreement <span class="cite">Clause 4.12 p.88</span>, as amended by Amendment 2 <span class="cite">Amd.2 &sect;3.1</span>, which requires formal notice <b style="color:var(--txt)">within twenty-one (21) days</b> of the event.</p>
+        <p style="margin-top:10px">We further note that the schedule impact claimed in P6 Update 26 <span class="cite">P6 U26</span> has not been substantiated in the schedule narrative as required by the contract. The 54-day delay to activities A7-2210 through A7-2265 remains undocumented.</p>
+        <p style="margin-top:10px">This letter is without prejudice to the Owner's rights under the Agreement. We reserve all positions.</p>
+      </div>
+
+      <div class="approval">
+        <div class="avatar-lg">RK</div>
+        <div><b>Your approval is required, Rania</b><br>
+        <span style="color:var(--faint)">The agent cannot send this response. Evidence pack with 6 documents will be auto-attached to your files.</span></div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px 16px;background:var(--panel2);border:1px solid var(--line);border-radius:10px">
+        <p style="font-size:12px;color:var(--dim)"><b style="color:var(--txt)">What happens when you approve:</b></p>
+        <p style="font-size:12px;color:var(--dim);margin-top:4px">
+          1. Response letter sent to contractor &nbsp;
+          2. Evidence pack assembled and filed &nbsp;
+          3. Event logged in the change register &nbsp;
+          4. Financial and schedule impact analysis triggered &nbsp;
+          5. Defense brief prepared for the Monday stewardship meeting
+        </p>
+      </div>
+
+      <div class="btnrow">
+        <button class="primary" onclick="approve()">&#10003; Approve &amp; send response</button>
+        <button>Edit draft first</button>
+        <button onclick="go(3)">&larr; Evidence</button>
+      </div>
+    </div>
+
+    <!-- ==================== STAGE 5: WHAT HAPPENS NEXT ==================== -->
+    <div class="stage" id="stage5">
+      <div class="section-title">After approval &mdash; three follow-up tasks run automatically</div>
+      <p style="color:var(--dim);font-size:12.5px;margin-bottom:14px">Once Rania approves, the response is sent and Shield automatically kicks off three follow-up tasks. Each runs as a separate agent on the NovaOS platform. Nothing goes out without a person signing off at the end.</p>
+
+      <div class="canvas">
+        <div class="grid-bg"></div>
+        <svg class="wires" width="100%" height="100%">
+          <path id="w1" d="M 250 80 C 330 80 330 50 410 50"/>
+          <path id="w2" d="M 250 90 C 340 100 340 180 410 185"/>
+          <path id="w3" d="M 250 100 C 330 120 330 310 410 315"/>
+          <path id="w4" d="M 620 50 C 700 50 700 180 770 180"/>
+          <path id="w5" d="M 620 185 C 700 185 700 185 770 185"/>
+          <path id="w6" d="M 620 315 C 700 315 700 195 770 195"/>
+        </svg>
+        <div class="node done" style="left:40px;top:50px" id="n0">
+          <h5>&#9670; Shield <span class="tag">APPROVED</span></h5>
+          <p>Response approved by Rania Khalid. Letter sent to contractor.</p>
+          <div class="status">&#10003; complete &middot; audit #8842</div>
+        </div>
+        <div class="node" style="left:410px;top:14px" id="n1">
+          <h5>&#128196; Evidence Compilation <span class="tag">AUTO</span></h5>
+          <p>Pulls together the 6 source documents into one evidence file. Links each document to the audit trail so everything is traceable.</p>
+          <div class="status">idle</div>
+        </div>
+        <div class="node" style="left:410px;top:150px" id="n2">
+          <h5>&#128200; Financial &amp; Supply Chain Impact <span class="tag">AUTO</span></h5>
+          <p>Checks what the owner is about to spend money on and flags anything that should be paused or rescheduled because of the claim.</p>
+          <div class="status">idle</div>
+        </div>
+        <div class="node" style="left:410px;top:280px" id="n3">
+          <h5>&#128197; Schedule Validation <span class="tag">AUTO</span></h5>
+          <p>Checks whether the contractor's claimed 54-day delay actually matches what the schedule data shows. Prepares questions for the owner to challenge it.</p>
+          <div class="status">idle</div>
+        </div>
+        <div class="node" style="left:770px;top:140px" id="n4">
+          <h5>&#128101; PMO Director Review <span class="tag">HUMAN GATE</span></h5>
+          <p>Summary of the owner's defense position for the Monday leadership meeting. Generated live from the record each time, then discarded.</p>
+          <div class="status">waiting on agents</div>
+        </div>
+      </div>
+
+      <div class="output-summary">
+        <div class="output-box">
+          <h5>Output 1: Defense record</h5>
+          <div class="val" style="color:var(--green)">Filed</div>
+          <p>Response letter sent to the contractor. 6 supporting documents bundled together. Event logged in the project register with a full trail of who did what and when.</p>
+        </div>
+        <div class="output-box">
+          <h5>Output 2: Save money before it's spent</h5>
+          <div class="val" style="color:var(--accent)">Pause the steel order</div>
+          <p>The owner was about to order $1.8M of steel for Area 7. Since the foundations are delayed, that order can wait. Piling rig rescheduled 2 weeks out until the new method is confirmed.</p>
+        </div>
+        <div class="output-box">
+          <h5>Output 3: Stewardship brief</h5>
+          <div class="val" style="color:var(--purple)">On demand</div>
+          <p>One-page summary of the owner's defense for the PMO Director. Generated live each time from the record, then discarded. Not a permanent dashboard.</p>
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button class="primary" onclick="renderBrief()">&#9889; Render stewardship brief &mdash; on demand</button>
+      </div>
+
+      <div class="gov">
+        <div class="g"><b>A person owns every decision</b>Rania Khalid (Contracts Lead) approved this response. The PMO Director owns the agent. Every action has a name next to it, is logged, and can be reversed.</div>
+        <div class="g"><b>The agent stays in its lane</b>If something is outside the project scope, it gets escalated to a person. Low-confidence items go into a review queue — nothing is silently dropped.</div>
+        <div class="g"><b>Success = dollars protected</b>Scoreboard: $42.3M claim defended &middot; 0 deadlines missed &middot; 3 threats assessed this month.</div>
+      </div>
+    </div>
+    </div><!-- end tab-shield -->
+
+    <!-- ==================== SYSTEM DESIGN TAB ==================== -->
+    <div class="top-tab-content" id="tab-system">
+
+      <div class="sd-callout"><b>Early-stage proposal.</b> This system design will be validated and refined through test-and-learn iterations on real project data, starting with Phase 0 backtests on closed projects. The synthetic scenario demonstrates the pipeline on a contractor building a $42.3M claim against the owner on the Jubail Gas Processing Expansion.</div>
+
+      <div class="sd-section">
+        <h3>DAG architecture overview</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:8px">Shield is a directed acyclic graph (DAG) pipeline. Each node has a defined input, output, and quality gate. LLM where language understanding is the problem. Code where being wrong is unrecoverable. Humans approve every external action.</p>
+        <div class="sd-dag">
+          <div class="sd-node code"><h5>1. Ingest</h5><p>Parse &amp; index</p><span class="pill code">code</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node llm"><h5>2. Detect</h5><p>Find threats</p><span class="pill llm">LLM</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node llm"><h5>3. Map contract</h5><p>Find clauses</p><span class="pill llm">LLM</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node code"><h5>4. Deadlines</h5><p>Date math</p><span class="pill code">code</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node llm"><h5>5. Evidence</h5><p>Build chain</p><span class="pill llm">LLM</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node llm"><h5>6. Draft</h5><p>Write response</p><span class="pill llm">LLM</span></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-node human"><h5>7. Human gate</h5><p>Approve</p><span class="pill human">human</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+            <h4 style="font-size:11.5px;display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="pill llm">LLM</span> Judgment tasks</h4>
+            <p style="font-size:10.5px;color:var(--dim);line-height:1.4">Threat detection, clause interpretation, evidence linking, response drafting. Pattern matching across unstructured text.</p>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+            <h4 style="font-size:11.5px;display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="pill code">Code</span> Deterministic tasks</h4>
+            <p style="font-size:10.5px;color:var(--dim);line-height:1.4">Document parsing, deadline computation, citation verification. Rules engines and date math. Auditable and reproducible.</p>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px">
+            <h4 style="font-size:11.5px;display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="pill human">Human</span> Decision tasks</h4>
+            <p style="font-size:10.5px;color:var(--dim);line-height:1.4">Defense strategy, response approval, claim valuation. The agent surfaces evidence and drafts; the human owns the decision.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sd-section">
+        <h3>Pipeline walkthrough</h3>
+
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin-bottom:8px">Steps 1-2: Ingest + Detect</p>
+        <div class="sd-ito">
+          <div class="sd-box in"><span class="sd-tag">Input</span>
+            <pre class="sd-src">DR-1042: "Piling rig PR-07 refusal at <b>2.1 m</b>"
+GBR 5.3.4: "Rippable material to <i>6.5 m</i>"</pre>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box proc"><span class="sd-tag">Processing</span>
+            <p>LLM pairs baseline with field observations. Rock at 2.1m vs 6.5m baseline. Change register: <b style="color:var(--red)">no record covers Area 7</b>. Contractor has grounds for a claim.</p>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box out"><span class="sd-tag">Output</span>
+            <pre class="sd-src">THREAT: EV-047 | confidence: 96%
+basis: rock at 2.1m vs 6.5m baseline
+in_change_register: <b>false</b></pre>
+          </div>
+        </div>
+
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin:14px 0 8px">Steps 3-4: Map contract + Deadlines</p>
+        <div class="sd-ito">
+          <div class="sd-box in"><span class="sd-tag">Input</span>
+            <pre class="sd-src">GC 4.12(b): "notice within <b>28 days</b>..."
+Amendment 2: replaced with "<b>21 days</b>"</pre>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box proc"><span class="sd-tag">Processing</span>
+            <p><span class="pill llm">LLM</span> retrieves clauses, applies amendments. <span class="pill code">Code</span> computes: 04 Aug + 21d = <b>25 Aug</b>. Owner response: 01 Sep (6 days left).</p>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box out"><span class="sd-tag">Output</span>
+            <pre class="sd-src">contractor_bar: 21d <i>(not 28 -- caught!)</i>
+contractor_deadline: <b>EXPIRED 25 Aug</b>
+owner_response: 01 Sep (6 days)</pre>
+          </div>
+        </div>
+
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin:14px 0 8px">Steps 5-6: Evidence + Draft</p>
+        <div class="sd-ito">
+          <div class="sd-box in"><span class="sd-tag">Input</span>
+            <pre class="sd-src">C-1187: "We reserve our rights..."
+<b>No particulars, no records attached.</b></pre>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box proc"><span class="sd-tag">Processing</span>
+            <p><span class="pill llm">LLM</span> scores documents for/against owner. C-1187 is bare reservation, doesn't satisfy notice. <span class="pill code">Code</span> verifies every citation. <span class="pill llm">LLM</span> drafts response.</p>
+          </div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-box out"><span class="sd-tag">Output</span>
+            <pre class="sd-src">EP-047: 6 items verified
+C-1187 <i>insufficient as notice (DEFENSE)</i>
+Amd 2: 21d bar <i>(may be expired)</i>
+DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="sd-section">
+        <h3>Quality gates</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:8px">Every node has a testable quality gate. The eval suite runs on a golden set of confirmed events.</p>
+        <div class="sd-eval-grid">
+          <div class="sd-eval">
+            <h4><span class="pill llm">LLM</span> Threat detection precision</h4>
+            <div class="sd-target" style="color:var(--green)">Target: 85%</div>
+            <p>False alarms destroy trust. Precision over recall.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> 50 site reports from closed project. Expert labeled 8 real threats, 42 non-events. Agent must flag the 8 without more than 1-2 false alarms.</div>
+          </div>
+          <div class="sd-eval">
+            <h4><span class="pill code">Code</span> Citation accuracy</h4>
+            <div class="sd-target" style="color:var(--green)">Target: 99.5%</div>
+            <p>Every citation must resolve to an actual document, section, and page.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> Agent cites "Clause 4.12, p.88". Verifier opens the contract, confirms clause exists at that page.</div>
+          </div>
+          <div class="sd-eval">
+            <h4><span class="pill code">Code</span> Deadline accuracy</h4>
+            <div class="sd-target" style="color:var(--green)">Target: 100%</div>
+            <p>Date math is code, never LLM. Zero tolerance for errors.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> Event date = 4 Aug, contract says "21 days", Amendment overrides to "14 days for Areas 6-8". Expected: 18 Aug.</div>
+          </div>
+          <div class="sd-eval">
+            <h4><span class="pill llm">LLM</span> Hallucination in drafts</h4>
+            <div class="sd-target" style="color:var(--green)">Target: 0 in approved outputs</div>
+            <p>Every sentence must trace to a source. Citation verifier + human review = double barrier.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> Agent writes "as stated in letter C-1205". Verifier checks: does C-1205 exist? If not, draft is blocked.</div>
+          </div>
+          <div class="sd-eval">
+            <h4><span class="pill llm">LLM</span> Defense position accuracy</h4>
+            <div class="sd-target" style="color:var(--amber)">Target: 80% agreement</div>
+            <p>"Owner advantage" vs "supports contractor" tagging must match expert assessment.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> 6 documents from a resolved dispute. Expert tagged 3/3 split. Agent must agree on at least 5 of 6.</div>
+          </div>
+          <div class="sd-eval">
+            <h4><span class="pill human">Human</span> Draft approval rate</h4>
+            <div class="sd-target" style="color:var(--amber)">Target: 70% approved</div>
+            <p>If the team rewrites most drafts, the agent isn't learning their style. Edit diffs feed the loop.</p>
+            <div class="sd-test"><b style="color:var(--txt)">Test:</b> After 4 weeks, of the last 20 drafts, at least 14 approved as-is or with minor edits.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sd-section">
+        <h3>Self-improving loop</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:8px">Gets smarter on your project, without your data leaving.</p>
+        <div class="sd-loop">
+          <div class="sd-lnode" style="border-color:#2a2860"><h5>Agent flags threat</h5><p>Detection + evidence + draft</p></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-lnode" style="border-color:#4a3818"><h5>Human reviews</h5><p>Approve, edit, or dismiss</p></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-lnode" style="border-color:#1a4a3a"><h5>Decision logged</h5><p>Labeled example in audit trail</p></div>
+          <div class="sd-arrow">&rarr;</div>
+          <div class="sd-lnode" style="border-color:#2a2860"><h5>Agent retunes</h5><p>Thresholds, templates, golden set</p></div>
+        </div>
+        <div class="sd-loop-cards">
+          <div class="sd-loop-card">
+            <h4 style="color:var(--amber)">Dismissals reduce noise</h4>
+            <p>When the team dismisses a false alarm, Shield raises its threshold for that pattern. Fewer irrelevant flags over time.</p>
+          </div>
+          <div class="sd-loop-card">
+            <h4 style="color:var(--accent)">Edits sharpen drafts</h4>
+            <p>When the team rewrites a response before sending, the edit diff is captured. Draft quality improves to match how the team writes.</p>
+          </div>
+          <div class="sd-loop-card">
+            <h4 style="color:var(--green)">Approvals confirm what matters</h4>
+            <p>Confirmed events grow the golden eval set. No update ships unless it passes on all confirmed events. The test suite gets harder over time.</p>
+          </div>
+        </div>
+        <div class="sd-callout"><b>Full sovereignty:</b> all retraining happens inside the customer's environment (in-region VPC or on-prem). Dispositions never leave. Your project data never improves someone else's agent. No shared model, no data export, no cross-tenant learning.</div>
+      </div>
+
+      <div class="sd-section">
+        <h3>End-to-end recap</h3>
+        <table class="sd-recap-table">
+          <tr><th>Step</th><th>Input</th><th>Output</th><th>Who</th><th>Eval gate</th></tr>
+          <tr><td><b>1. Ingest</b></td><td>6 raw files, 5 systems</td><td>Indexed record with provenance</td><td style="color:var(--green)">Code</td><td>Parse coverage 100%</td></tr>
+          <tr><td><b>2. Detect</b></td><td>Baseline + field reports</td><td>EV-047 threat, 96% confidence</td><td style="color:var(--purple)">LLM</td><td>Precision &ge;85%</td></tr>
+          <tr><td><b>3. Map contract</b></td><td>GC 4.12 + Amendment 2</td><td>21-day bar (not 28), clause refs</td><td style="color:var(--purple)">LLM</td><td>Expert agreement &ge;80%</td></tr>
+          <tr><td><b>4. Deadlines</b></td><td>Date anchors</td><td>Contractor bar expired, 6 days left</td><td style="color:var(--green)">Code</td><td>Accuracy = 100%</td></tr>
+          <tr><td><b>5. Evidence</b></td><td>Chronology + letters</td><td>EP-047: 6 docs, 3 defense advantages</td><td><span style="color:var(--purple)">LLM</span> + <span style="color:var(--green)">Code</span></td><td>Citation accuracy &ge;99.5%</td></tr>
+          <tr><td><b>6. Draft</b></td><td>EP-047 + defense positions</td><td>Owner response letter, every sentence cited</td><td style="color:var(--purple)">LLM</td><td>0 hallucinations, 70% approval</td></tr>
+          <tr><td><b>7. Human gate</b></td><td>Draft + evidence</td><td>Approved response, audit trail, 5 actions</td><td style="color:var(--amber)">Human</td><td>Named approver required</td></tr>
+        </table>
+      </div>
+
+    </div><!-- end tab-system -->
+
+    <!-- ==================== HOW THIS WAS BUILT TAB ==================== -->
+    <div class="top-tab-content" id="tab-built">
+
+      <div class="htb-section">
+        <h3>Case study artifacts &amp; the skills that produced them</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">Every artifact was produced using <b style="color:var(--txt)">PM OS</b>, a reusable operating system for product work. Each skill follows a consistent process: gather context, generate a first draft, review from multiple perspectives, iterate.</p>
+
+        <div class="htb-group">
+          <h4>Discovery &amp; Research</h4>
+          <ul class="htb-list">
+            <li><a href="artifacts/analyses/competitive-analysis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Competitive Analysis</b></a> — SuperHive, Nodes &amp; Links, full landscape<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/competitor-analysis</code></li>
+            <li><a href="artifacts/analyses/impact-sizing.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Impact Sizing</b></a> — driver tree, three scenarios ($30-80M value, $10-12M ARR)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/impact-sizing</code></li>
+            <li><a href="artifacts/analyses/sub-agent-review-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Sub-Agent Review Synthesis</b></a> — 5-reviewer stress test, 12 findings<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/ralph-wiggum</code> <code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-review-panel</code></li>
+            <li><a href="artifacts/analyses/orbitron-context-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Orbitron Context Synthesis</b></a> — product, founder, platform analysis</li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Product Specs</h4>
+          <ul class="htb-list">
+            <li><a href="artifacts/prds/product-prd.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Product PRD</b></a> — hypothesis, behavior contract, rollout plan, eval framework<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft</code></li>
+            <li><a href="artifacts/prds/ai-engineering-prd.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>AI Engineering PRD</b></a> — DAG pipeline, governance kernel, eval suites<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft --ai</code></li>
+            <li><a href="artifacts/roadmaps/strategy-and-roadmap.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Strategy &amp; Roadmap</b></a> — thesis, wedge decision, 3-horizon plan<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/write-prod-strategy</code></li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Prototypes</h4>
+          <ul class="htb-list">
+            <li><b style="color:var(--txt)">Interactive prototype</b> — this demo (Shield Demo tab)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
+            <li><b style="color:var(--txt)">Agentic system design</b> — condensed in the System Design tab<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
+            <li><a href="eval-harness/" target="_blank" style="color:var(--accent);text-decoration:none"><b>Eval Harness &amp; Governance Kernel</b></a> — runnable code with synthetic data</li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Validation</h4>
+          <ul class="htb-list">
+            <li><a href="artifacts/validation/quotes-by-opportunity.html" target="_blank" style="color:var(--accent);text-decoration:none"><b>Validation Quotes by Opportunity</b></a> — sourced quotes mapped to personas and JTBD</li>
+            <li><a href="#" target="_blank" style="color:var(--accent);text-decoration:none"><b>Discovery Report (Plain English)</b></a> — full report without jargon</li>
+            <li><a href="#" target="_blank" style="color:var(--accent);text-decoration:none"><b>Full Discovery Research</b></a> — 48 sources, 7 sections</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="htb-section">
+        <h3>PM OS — the system behind this case study</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">PM OS is a reusable operating system for product management work. 41 AI-assisted skills covering the full PM lifecycle, from discovery through launch. Here are the ones used for this case study:</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="htb-skill"><code>/prd-draft</code><span>Product PRD with hypothesis, behavior contract, rollout plan</span></div>
+          <div class="htb-skill"><code>/impact-sizing</code><span>4-step framework: usage funnel, impact calc, assumptions, takeaways</span></div>
+          <div class="htb-skill"><code>/competitor-analysis</code><span>Competitive landscape mapping with positioning</span></div>
+          <div class="htb-skill"><code>/ralph-wiggum</code><span>Devil's advocate review — catches what you don't want to hear</span></div>
+          <div class="htb-skill"><code>/prd-review-panel</code><span>Multi-perspective review: engineer, designer, exec, legal, customer</span></div>
+          <div class="htb-skill"><code>/prototype</code><span>Interactive prototypes generated from PRD specs</span></div>
+          <div class="htb-skill"><code>/write-prod-strategy</code><span>Strategy thesis, wedge decision, multi-horizon roadmap</span></div>
+        </div>
+
+        <p style="font-size:11px;color:var(--faint);margin-top:12px">Other available skills not used here: <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/daily-plan</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/meeting-notes</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/user-interview</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/experiment-decision</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/launch-checklist</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/feature-metrics</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/journey-map</code> and 34 more.</p>
+
+        <div class="htb-callout"><b>The skills compound.</b> Discovery research feeds impact sizing. Impact sizing feeds the PRD. The PRD feeds the prototype. The review panel catches gaps. Each output is the input for the next. This isn't a one-off case study process — it's how I work on every product problem.</div>
+      </div>
+
+    </div><!-- end tab-built -->
+
+  </div>
+</div>
+
+<div class="toast" id="toast">&#10003; Response approved &mdash; sending to contractor, triggering downstream analysis</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeBrief()">
+  <div class="brief">
+    <span class="ephemeral">&#9889; RENDERED ON DEMAND &middot; NOT SAVED &middot; REGENERATED FROM THE RECORD EACH TIME</span>
+    <h4>Defense brief &mdash; EV-047 &middot; Contractor claim, Area 7 ground conditions</h4>
+    <div class="sub">Compiled for PMO Director &middot; Monday stewardship meeting &middot; sources: 6 documents, 3 analyses &middot; audit #8842</div>
+    <table>
+      <tr><td><b>Threat</b></td><td>Contractor claim for $42.3M (extra cost + 54-day schedule delay)</td></tr>
+      <tr><td><b>Owner's position</b></td><td>Strong &mdash; 3 procedural weaknesses in contractor's claim identified</td></tr>
+      <tr><td><b>Response status</b></td><td>JGX-OWN-0047 sent by Rania Khalid &middot; contractor's notice deadline in 6 days</td></tr>
+      <tr><td><b>Evidence pack</b></td><td>EP-047 &middot; 6 documents &middot; audit-mapped</td></tr>
+      <tr><td><b>Money saved</b></td><td>Paused the $1.8M steel order (not needed yet) &middot; piling rig rescheduled +2 weeks</td></tr>
+      <tr><td><b>Schedule challenge</b></td><td>9 questions drafted &mdash; contractor's 54-day delay is unsubstantiated in the P6 narrative</td></tr>
+    </table>
+    <div class="typing" id="briefText"></div>
+    <div class="btnrow" style="margin-top:6px">
+      <button onclick="closeBrief()">Discard view</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTopTab(tab){
+  document.querySelectorAll('.top-tab').forEach((t,i)=>{
+    const tabs=['shield','system','built'];
+    t.classList.toggle('active',tabs[i]===tab);
+  });
+  document.querySelectorAll('.top-tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+const totalStages = 5;
+function go(n){
+  for(let i=1;i<=totalStages;i++){
+    const el=document.getElementById('stage'+i); if(el) el.classList.toggle('active',i===n);
+    const s=document.getElementById('s'+i); if(s){s.classList.toggle('cur',i===n);s.classList.toggle('done',i<n)}
+  }
+  if(n===5) runOrchestration();
+}
+function approve(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+  setTimeout(()=>go(5),900);
+}
+let ran=false;
+function runOrchestration(){
+  if(ran) return; ran=true;
+  const seq=[
+    ()=>{wire('w1');wire('w2');wire('w3')},
+    ()=>{on('n1','Assembling evidence pack from 6 source documents\u2026')},
+    ()=>{on('n2','Tracing cost exposure across procurement and logistics\u2026')},
+    ()=>{on('n3','Validating contractor schedule claims against P6 record\u2026')},
+    ()=>{done('n1','\u2713 Evidence pack EP-047 ready \u00b7 6 docs \u00b7 audit-mapped')},
+    ()=>{done('n2','\u2713 Steel order paused \u00b7 $1.8M saved \u00b7 pile rig rescheduled +2wks')},
+    ()=>{done('n3','\u2713 9 challenge questions \u00b7 54-day delay unsubstantiated')},
+    ()=>{wire('w4');wire('w5');wire('w6');on('n4','Defense brief compiled \u00b7 ready for PMO Director')},
+  ];
+  seq.forEach((f,i)=>setTimeout(f,600+i*1100));
+}
+function wire(id){document.getElementById(id).classList.add('live')}
+function on(id,msg){const n=document.getElementById(id);n.classList.add('on');n.querySelector('.status').textContent=msg}
+function done(id,msg){const n=document.getElementById(id);n.classList.remove('on');n.classList.add('done');n.querySelector('.status').textContent=msg}
+
+const briefCopy = "Recommendation: the owner's position is strong. The contractor's informal letter (C-1187) does not satisfy the formal notice requirement under Clause 4.12 as amended. If the contractor fails to file a proper notice within the remaining 6 days, their claim is procedurally barred and the owner owes nothing. Meanwhile, pause the Area 7 steel order \u2014 the foundations are delayed, so that $1.8M doesn\u2019t need to be spent yet. Raise the 9 schedule challenge questions at Thursday's review: the contractor's 54-day delay has no documented cause in the P6 narrative. No other threats within 30 days of a deadline.";
+let typeTimer=null;
+function renderBrief(){
+  const o=document.getElementById('overlay'); o.classList.add('show');
+  const el=document.getElementById('briefText'); el.innerHTML='';
+  let i=0; clearInterval(typeTimer);
+  typeTimer=setInterval(()=>{
+    i+=3;
+    el.innerHTML=briefCopy.slice(0,i)+'<span class="cursor"></span>';
+    if(i>=briefCopy.length){el.textContent=briefCopy;clearInterval(typeTimer)}
+  },18);
+}
+function closeBrief(){
+  clearInterval(typeTimer);
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('briefText').textContent='';
+}
+</script>
+</body>
+</html>
