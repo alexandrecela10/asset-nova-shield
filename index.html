@@ -893,6 +893,11 @@ function closeBrief(){
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('briefText').textContent='';
 }
+// Hash-based tab routing
+(function(){
+  var h=location.hash.replace('#','');
+  if(h==='system'||h==='built') switchTopTab(h);
+})();
 </script>
 </body>
 </html>
