@@ -989,7 +989,7 @@ function togglePanel(){
 }
 function switchTopTab(tab){
   document.querySelectorAll('.top-tab').forEach((t,i)=>{
-    const tabs=['shield','system','built','enhanced'];
+    const tabs=['shield','enhanced','system','built'];
     t.classList.toggle('active',tabs[i]===tab);
   });
   document.querySelectorAll('.top-tab-content').forEach(c=>c.classList.remove('active'));
