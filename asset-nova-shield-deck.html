@@ -172,7 +172,7 @@ ul.clean li::before{content:'';position:absolute;left:0;top:11px;width:6px;heigh
       <div class="demo-step"><div class="num">4</div><h5>Approve</h5><p>A named human reviews and approves. Nothing is sent without sign-off.</p></div>
     </div>
     <a class="btn" href="https://alexandrecela10.github.io/asset-nova-shield/" target="_blank">Open live prototype</a>
-    <a class="btn outline" href="https://alexandrecela10.github.io/asset-nova-shield/#system" target="_blank" style="margin-left:8px">View agent walkthrough (step-by-step)</a>
+    <p style="margin-top:10px;font-size:11px;color:var(--dim)">For the full agent walkthrough, open the prototype and navigate to the <b style="color:var(--accent)">System Design</b> tab.</p>
   </div>
 
   <div class="grid-2" style="margin-top:20px">
@@ -369,6 +369,7 @@ ul.clean li::before{content:'';position:absolute;left:0;top:11px;width:6px;heigh
       <p>Scope enforcement, action allowlist, human approval gate, full audit trail. No code path acts first and checks later.</p>
     </div>
   </div>
+  <p style="margin-top:8px;font-size:11px;color:var(--dim)">For the detailed pipeline walkthrough, eval gates, and self-improving loop, open the <a href="https://alexandrecela10.github.io/asset-nova-shield/" target="_blank" style="color:var(--accent);text-decoration:none">prototype</a> and navigate to the <b style="color:var(--accent)">System Design</b> tab.</p>
 </div>
 
 <!-- ===================== SLIDE 5b: SELF-IMPROVING LOOP ===================== -->
@@ -692,8 +693,8 @@ ul.clean li::before{content:'';position:absolute;left:0;top:11px;width:6px;heigh
 
     <div style="margin-top:32px;display:flex;gap:16px">
       <a class="btn" href="https://alexandrecela10.github.io/asset-nova-shield/" target="_blank">Replay the demo</a>
-      <a class="btn outline" href="https://alexandrecela10.github.io/asset-nova-shield/#system" target="_blank">Agent walkthrough</a>
     </div>
+    <p style="margin-top:12px;font-size:11px;color:var(--dim)">For the agent walkthrough, open the prototype and navigate to the <b style="color:var(--accent)">System Design</b> tab. For all PM artifacts, navigate to the <b style="color:var(--accent)">How This Was Built</b> tab.</p>
 
     <p style="margin-top:48px;font-size:13px;color:var(--faint)">Alexandre Cela · August 2026</p>
   </div>
@@ -743,43 +744,44 @@ ul.clean li::before{content:'';position:absolute;left:0;top:11px;width:6px;heigh
 <div class="slide" id="sA2">
   <div class="label">Appendix</div>
   <h2>Supporting artifacts</h2>
-  <p class="subtitle">Full PM deliverables produced during this case study. Click to open.</p>
+  <p class="subtitle">Full PM deliverables produced during this case study.</p>
 
   <div class="grid-2" style="margin-top:28px">
     <div class="card">
       <div class="label" style="color:var(--accent)">Discovery & Research</div>
       <ul class="clean" style="margin-top:8px">
-        <li><a href="artifacts/analyses/competitive-analysis.md" target="_blank" style="color:var(--accent);text-decoration:none">Competitive Analysis</a> — SuperHive, Nodes & Links, full landscape</li>
-        <li><a href="artifacts/analyses/impact-sizing.md" target="_blank" style="color:var(--accent);text-decoration:none">Impact Sizing</a> — driver tree, three scenarios, revenue model</li>
-        <li><a href="artifacts/analyses/sub-agent-review-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none">Sub-Agent Review Synthesis</a> — 5-reviewer stress test, 12 findings</li>
-        <li><a href="artifacts/analyses/orbitron-context-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none">Orbitron Context Synthesis</a> — product, founder, platform analysis</li>
+        <li><b style="color:var(--txt)">Competitive Analysis</b> — SuperHive, Nodes & Links, full landscape</li>
+        <li><b style="color:var(--txt)">Impact Sizing</b> — driver tree, three scenarios, revenue model</li>
+        <li><b style="color:var(--txt)">Sub-Agent Review Synthesis</b> — 5-reviewer stress test, 12 findings</li>
+        <li><b style="color:var(--txt)">Orbitron Context Synthesis</b> — product, founder, platform analysis</li>
       </ul>
     </div>
     <div class="card">
       <div class="label" style="color:var(--green)">Product Specs</div>
       <ul class="clean" style="margin-top:8px">
-        <li><a href="artifacts/prds/product-prd.md" target="_blank" style="color:var(--accent);text-decoration:none">Product PRD</a> — solution review stage, post sub-agent review</li>
-        <li><a href="artifacts/prds/ai-engineering-prd.md" target="_blank" style="color:var(--accent);text-decoration:none">AI Engineering PRD</a> — DAG pipeline, governance kernel, eval suites</li>
-        <li><a href="artifacts/roadmaps/strategy-and-roadmap.md" target="_blank" style="color:var(--accent);text-decoration:none">Strategy & Roadmap</a> — thesis, wedge decision, 3-horizon plan</li>
+        <li><b style="color:var(--txt)">Product PRD</b> — solution review stage, post sub-agent review</li>
+        <li><b style="color:var(--txt)">AI Engineering PRD</b> — DAG pipeline, governance kernel, eval suites</li>
+        <li><b style="color:var(--txt)">Strategy & Roadmap</b> — thesis, wedge decision, 3-horizon plan</li>
       </ul>
     </div>
     <div class="card">
-      <div class="label" style="color:var(--purple)">Prototypes</div>
+      <div class="label" style="color:var(--purple)">Prototypes & Code</div>
       <ul class="clean" style="margin-top:8px">
-        <li><a href="https://alexandrecela10.github.io/asset-nova-shield/" target="_blank" style="color:var(--accent);text-decoration:none">Live Interactive Prototype</a> — 4-stage detection-to-approval flow</li>
-        <li><a href="https://alexandrecela10.github.io/asset-nova-shield/#system" target="_blank" style="color:var(--accent);text-decoration:none">Agent Walkthrough Deck</a> — step-by-step pipeline with synthetic data</li>
-        <li><a href="eval-harness/" target="_blank" style="color:var(--accent);text-decoration:none">Eval Harness & Governance Kernel</a> — runnable code with synthetic data</li>
+        <li><b style="color:var(--txt)">Live Interactive Prototype</b> — 5-stage detection-to-approval flow</li>
+        <li><b style="color:var(--txt)">System Design</b> — DAG pipeline, eval gates, self-improving loop</li>
+        <li><b style="color:var(--txt)">Eval Harness & Governance Kernel</b> — runnable code with synthetic data</li>
       </ul>
     </div>
     <div class="card">
       <div class="label" style="color:var(--amber)">Validation</div>
       <ul class="clean" style="margin-top:8px">
-        <li><a href="artifacts/validation/quotes-by-opportunity.html" target="_blank" style="color:var(--accent);text-decoration:none">Validation Quotes by Opportunity</a> — sourced quotes mapped to personas and JTBD</li>
-        <li><a href="#" target="_blank" style="color:var(--accent);text-decoration:none">Discovery Report (Plain English)</a> — full report without jargon</li>
-        <li><a href="#" target="_blank" style="color:var(--accent);text-decoration:none">Full Discovery Research</a> — 48 sources, 7 sections</li>
+        <li><b style="color:var(--txt)">Validation Quotes by Opportunity</b> — sourced quotes mapped to personas and JTBD</li>
+        <li><b style="color:var(--txt)">Discovery Report (Plain English)</b> — full report without jargon</li>
+        <li><b style="color:var(--txt)">Full Discovery Research</b> — 48 sources, 7 sections</li>
       </ul>
     </div>
   </div>
+  <p style="margin-top:16px;font-size:12px;color:var(--dim)">All artifacts are clickable and downloadable in the <a href="https://alexandrecela10.github.io/asset-nova-shield/" target="_blank" style="color:var(--accent);text-decoration:none">prototype</a> — navigate to the <b style="color:var(--accent)">How This Was Built</b> tab.</p>
 </div>
 
 </div><!-- /deck -->
