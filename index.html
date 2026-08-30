@@ -988,11 +988,12 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
 
       <!-- ==================== AGENTIC DESIGN EXPLORATION (within System Design) ==================== -->
       <div style="margin-top:28px;border:2px solid var(--purple);border-radius:14px;overflow:hidden">
-        <div style="padding:14px 18px;background:rgba(157,122,247,.08);display:flex;align-items:center;gap:10px">
+        <div onclick="document.getElementById('agenticExplore').style.display=document.getElementById('agenticExplore').style.display==='none'?'block':'none';this.querySelector('.toggle-arrow').textContent=document.getElementById('agenticExplore').style.display==='none'?'\u25B6':'\u25BC'" style="padding:14px 18px;background:rgba(157,122,247,.08);cursor:pointer;display:flex;align-items:center;gap:10px">
+          <span class="toggle-arrow" style="color:var(--purple);font-size:12px">&#9654;</span>
           <span style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--purple);font-weight:700">Agentic Design Exploration</span>
           <span style="margin-left:auto;font-size:10px;color:var(--purple);background:rgba(157,122,247,.15);padding:3px 10px;border-radius:4px;font-weight:700">In research &amp; testing</span>
         </div>
-        <div style="padding:20px 18px;background:var(--bg)">
+        <div id="agenticExplore" style="display:none;padding:20px 18px;background:var(--bg)">
 
       <div class="ad-banner">&#9888; In research and testing phase — these designs are under evaluation, not finalized</div>
 
