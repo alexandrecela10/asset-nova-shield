@@ -248,6 +248,38 @@
   .ed-bar{width:60px;height:6px;background:var(--line);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
   .ed-bar .fill{height:100%;border-radius:3px}
 
+  /* Agentic Design tab */
+  .ad-banner{background:var(--panel);border:1px solid var(--purple);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:11.5px;color:var(--purple);display:flex;align-items:center;gap:8px}
+  .ad-section{margin-bottom:28px}
+  .ad-section h3{font-size:16px;font-weight:700;margin-bottom:4px}
+  .ad-section .ad-sub{font-size:12px;color:var(--dim);margin-bottom:14px}
+  .ad-diagram{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:24px 20px;overflow-x:auto}
+  .ad-flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:max-content}
+  .ad-node{padding:10px 14px;border-radius:10px;font-size:11px;text-align:center;line-height:1.4;border:1px solid var(--line);background:var(--panel);min-width:90px;flex-shrink:0}
+  .ad-node b{display:block;font-size:12px;color:var(--txt);margin-bottom:2px}
+  .ad-node span{color:var(--dim);font-size:10px}
+  .ad-node.llm{border-color:#2a2860;background:#12122a}
+  .ad-node.code{border-color:#1a4a3a;background:#0d1f18}
+  .ad-node.human{border-color:var(--amber);background:#1a1508}
+  .ad-node.gov{border-color:var(--purple);background:#150d28}
+  .ad-node.orch{border-color:var(--accent);background:#0d1528}
+  .ad-arrow{color:var(--faint);font-size:16px;padding:0 6px;flex-shrink:0}
+  .ad-branch{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+  .ad-branch .ad-node{min-width:110px}
+  .ad-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;margin-top:4px}
+  .ad-tag.recall{background:#162040;color:var(--accent)}
+  .ad-tag.precision{background:#0d2a1e;color:var(--green)}
+  .ad-tag.speed{background:#2a2010;color:var(--amber)}
+  .ad-tag.gov-tag{background:#1e1535;color:var(--purple)}
+  .ad-eval-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+  .ad-eval-table th{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
+  .ad-eval-table td{padding:9px 10px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+  .ad-eval-table td b{color:var(--txt)}
+  .ad-verdict{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:12px;line-height:1.6}
+  .ad-verdict.recommended{background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.25);color:var(--dim)}
+  .ad-verdict.alternative{background:rgba(74,143,247,.06);border:1px solid rgba(74,143,247,.2);color:var(--dim)}
+  .ad-loop{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
   .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#04110b;font-weight:600;padding:12px 18px;border-radius:10px;transform:translateY(80px);opacity:0;transition:all .5s;z-index:60}
   .toast.show{transform:none;opacity:1}
 
@@ -289,6 +321,7 @@
   <div class="top-tab" onclick="switchTopTab('enhanced')">Daily Risk Dashboard</div>
   <div class="top-tab" onclick="switchTopTab('system')">System Design</div>
   <div class="top-tab" onclick="switchTopTab('built')">How This Was Built</div>
+  <div class="top-tab" onclick="switchTopTab('agentic')">Agentic Design</div>
 </div>
 
 <div class="layout" id="layout" style="position:relative">
@@ -953,6 +986,224 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
 
     </div><!-- end tab-enhanced -->
 
+    <div class="top-tab-content" id="tab-agentic">
+
+      <div class="ad-banner">&#9888; In research and testing phase — these designs are under evaluation, not finalized</div>
+
+      <!-- ===== DESIGN A ===== -->
+      <div class="ad-section">
+        <h3>Design A: Cascade Pipeline</h3>
+        <div class="ad-sub">Wide funnel, progressive filtering. Optimized for recall and speed.</div>
+
+        <div class="ad-diagram">
+          <div class="ad-flow">
+            <div class="ad-node"><b>Document Input</b><span>Aconex, P6, SAP</span><div class="ad-tag speed">continuous</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm"><b>Fast Triage</b><span>Small model + rules</span><div class="ad-tag recall">100% recall target</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm"><b>Deep Analysis</b><span>Frontier LLM on flagged items only</span><div class="ad-tag precision">+precision</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node" style="border:none;background:none;min-width:auto;padding:0">
+              <div class="ad-branch">
+                <div class="ad-node code"><b>Deadline Engine</b><span>Deterministic date math</span><div class="ad-tag gov-tag">never LLM</div></div>
+                <div class="ad-node code"><b>Citation Verifier</b><span>Doc ID + quote match</span><div class="ad-tag gov-tag">99.5% gate</div></div>
+              </div>
+            </div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm"><b>Evidence Assembly</b><span>RAG from document store</span><div class="ad-tag precision">grounded</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm"><b>Defense Draft</b><span>Draft + QA retry loop</span><div class="ad-tag precision">pass@k</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node gov"><b>Governance Kernel</b><span>Scope, allowlist, audit, sovereignty</span><div class="ad-tag gov-tag">runtime</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node human"><b>Human Gate</b><span>Named approver signs off</span><div class="ad-tag speed">final</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:16px;font-size:11px;color:var(--dim)">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#12122a;border:1px solid #2a2860;vertical-align:-1px;margin-right:4px"></span> LLM node</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#0d1f18;border:1px solid #1a4a3a;vertical-align:-1px;margin-right:4px"></span> Deterministic (code)</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#150d28;border:1px solid var(--purple);vertical-align:-1px;margin-right:4px"></span> Governance</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#1a1508;border:1px solid var(--amber);vertical-align:-1px;margin-right:4px"></span> Human</span>
+        </div>
+
+        <div class="ad-verdict recommended">
+          <b style="color:var(--green)">Recommended for v1.</b> Fixed DAG is fully testable per node. 100% recall is structural (triage is deliberately permissive). Precision improves at each stage. Fast: frontier LLM only runs on ~25-30% of document volume. Maps to existing AI engineering PRD architecture.
+        </div>
+      </div>
+
+      <!-- ===== DESIGN B ===== -->
+      <div class="ad-section">
+        <h3>Design B: Orchestrator + Specialist Agents</h3>
+        <div class="ad-sub">A routing agent delegates to domain-specific sub-agents. Optimized for precision and composability.</div>
+
+        <div class="ad-diagram">
+          <div class="ad-flow">
+            <div class="ad-node"><b>Document Input</b><span>Aconex, P6, SAP</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node orch" style="min-width:120px"><b>Orchestrator Agent</b><span>Reasons about which agents to invoke and in what order</span><div class="ad-tag recall">routing risk</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node" style="border:none;background:none;min-width:auto;padding:0">
+              <div class="ad-branch">
+                <div class="ad-node llm"><b>Threat Detector</b><span>Tuned for recall</span></div>
+                <div class="ad-node llm"><b>Clause Extractor</b><span>Contract parsing</span></div>
+                <div class="ad-node llm"><b>Evidence Linker</b><span>Cross-doc reasoning</span></div>
+                <div class="ad-node code"><b>Deadline Computer</b><span>Deterministic</span></div>
+                <div class="ad-node llm"><b>Defense Drafter</b><span>Response generation</span></div>
+              </div>
+            </div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm"><b>Cross-Validation</b><span>"If I were the contractor, how would I attack this defense?"</span><div class="ad-tag precision">adversarial</div></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node gov"><b>Governance Kernel</b><span>Scope, allowlist, audit, sovereignty</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node human"><b>Human Gate</b><span>Named approver</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:16px;font-size:11px;color:var(--dim)">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#0d1528;border:1px solid var(--accent);vertical-align:-1px;margin-right:4px"></span> Orchestrator</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#12122a;border:1px solid #2a2860;vertical-align:-1px;margin-right:4px"></span> LLM node</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#0d1f18;border:1px solid #1a4a3a;vertical-align:-1px;margin-right:4px"></span> Deterministic</span>
+        </div>
+
+        <div class="ad-verdict alternative">
+          <b style="color:var(--accent)">Better long-term architecture.</b> Each agent is independently evaluable and reusable in NovaStudio. Orchestrator enables richer reasoning (e.g., "this is a delay claim, run schedule analysis first"). Cross-validation agent strengthens defenses. But: orchestrator routing is itself an LLM decision, making 100% recall harder to guarantee at launch. Slower and more complex to eval end-to-end.
+        </div>
+      </div>
+
+      <!-- ===== SELF-IMPROVING LOOP ===== -->
+      <div class="ad-section">
+        <h3>Shared: Self-Improving Eval Loop</h3>
+        <div class="ad-sub">Applies to both designs. How the agent gets better on each project without re-engineering.</div>
+
+        <div class="ad-diagram">
+          <div class="ad-loop">
+            <div class="ad-node human" style="min-width:130px"><b>Human decisions</b><span>Approve, edit, or dismiss</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node" style="min-width:130px"><b>Labeled examples</b><span>Project-specific golden set</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm" style="min-width:130px"><b>Eval engine</b><span>Benchmark agent against updated set</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node llm" style="min-width:130px"><b>Prompt optimizer</b><span>Reflect on disagreements, synthesize updates</span></div>
+            <div class="ad-arrow">&#8594;</div>
+            <div class="ad-node gov" style="min-width:130px"><b>Config store</b><span>Update thresholds, few-shot examples</span></div>
+            <div class="ad-arrow">&#8635;</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--dim);margin-top:10px;text-align:center">Prompt tuning, not fine-tuning. Learning stays in-region. Threshold changes are automatic; prompt changes require human approval.</p>
+      </div>
+
+      <!-- ===== TRADEOFF TABLE ===== -->
+      <div class="ad-section">
+        <h3>Design Tradeoff: Success Metrics and Guardrails</h3>
+        <div class="ad-sub">How each design performs against objective success metrics and guardrail constraints.</div>
+
+        <table class="ad-eval-table">
+          <thead>
+            <tr>
+              <th style="width:14%">Dimension</th>
+              <th style="width:14%">Metric</th>
+              <th style="width:10%">Gate</th>
+              <th style="width:31%">Design A: Cascade</th>
+              <th style="width:31%">Design B: Orchestrator</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent);font-weight:700;padding:12px 10px 6px;border-bottom:1px solid var(--line);background:rgba(74,143,247,.04)">Objective success metrics</td></tr>
+            <tr>
+              <td><b>Recall</b></td>
+              <td>Threats detected / total real threats</td>
+              <td><b style="color:var(--red)">100%</b> hard</td>
+              <td><b style="color:var(--green)">Structural.</b> Fast triage is deliberately permissive. Recall is a property of the design, not a tuning target.</td>
+              <td><b style="color:var(--amber)">Dependent on orchestrator routing.</b> If orchestrator skips threat detector on a document, threat is missed. Requires routing eval coverage.</td>
+            </tr>
+            <tr>
+              <td><b>Precision</b></td>
+              <td>Real threats / total alerts raised</td>
+              <td><b style="color:var(--amber)">&gt;70%</b> soft, improving</td>
+              <td><b style="color:var(--amber)">Progressive.</b> ~25-30% after triage, ~70-80% after deep analysis. Each stage has its own precision eval. Improves with feedback loop.</td>
+              <td><b style="color:var(--green)">Higher at launch.</b> Specialist agents are individually tuned. Cross-validation catches weak cases. But harder to diagnose precision drops (which agent failed?).</td>
+            </tr>
+            <tr>
+              <td><b>Draft quality</b></td>
+              <td>Human edit distance on defense responses</td>
+              <td>Decreasing trend</td>
+              <td><b>QA retry loop (pass@k).</b> Single drafter with iterative refinement. Quality depends on one agent's capability.</td>
+              <td><b style="color:var(--green)">Adversarial cross-validation.</b> Separate agent stress-tests the defense before human review. Stronger output.</td>
+            </tr>
+            <tr>
+              <td><b>Speed</b></td>
+              <td>Ingestion to alert</td>
+              <td><b style="color:var(--amber)">&lt;4h</b> (triage &lt;5min)</td>
+              <td><b style="color:var(--green)">Fast.</b> Frontier LLM runs on ~25-30% of volume. Triage alerts can fire in minutes for deadline-critical items.</td>
+              <td><b style="color:var(--amber)">Slower.</b> Multiple agent invocations with individual latency. Orchestrator reasoning adds overhead. Less predictable total time.</td>
+            </tr>
+            <tr>
+              <td><b>Adoption</b></td>
+              <td>Daily review completion rate</td>
+              <td><b>&gt;90%</b></td>
+              <td><b style="color:var(--green)">Simpler output.</b> Contracts team sees a filtered list. Predictable behavior builds trust faster.</td>
+              <td><b>Richer output.</b> Cross-validation provides "contractor perspective" which adds value but also complexity to the review.</td>
+            </tr>
+            <tr><td colspan="5" style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--purple);font-weight:700;padding:12px 10px 6px;border-bottom:1px solid var(--line);background:rgba(157,122,247,.04)">Guardrail metrics (must not violate)</td></tr>
+            <tr>
+              <td><b>Citation accuracy</b></td>
+              <td>Citations that resolve and quote-match source</td>
+              <td><b style="color:var(--red)">99.5%</b> hard</td>
+              <td><b style="color:var(--green)">Deterministic verifier in the DAG.</b> Every citation checked by code before surfacing. Failed citations downgraded, never shown.</td>
+              <td><b style="color:var(--green)">Same verifier, different position.</b> Runs after evidence linker agent. Same guarantee, but verifier must handle outputs from multiple agent formats.</td>
+            </tr>
+            <tr>
+              <td><b>Deadline accuracy</b></td>
+              <td>Computed dates vs hand-verified</td>
+              <td><b style="color:var(--red)">100%</b> hard</td>
+              <td><b style="color:var(--green)">Code-only.</b> Rules engine with PROVISIONAL flag for missing amendments. LLM never touches date math.</td>
+              <td><b style="color:var(--green)">Same engine.</b> Dedicated deadline computer agent is deterministic. Identical guarantee.</td>
+            </tr>
+            <tr>
+              <td><b>Hallucination defense</b></td>
+              <td>Fabricated citations caught</td>
+              <td><b style="color:var(--red)">100%</b> hard</td>
+              <td><b style="color:var(--green)">Structural.</b> Verifier is a mandatory DAG node. No path bypasses it.</td>
+              <td><b style="color:var(--amber)">Orchestrator-dependent.</b> Orchestrator must always route through verifier. A routing bug could skip it. Needs explicit routing eval.</td>
+            </tr>
+            <tr>
+              <td><b>Sovereignty</b></td>
+              <td>Data residency violations</td>
+              <td><b style="color:var(--red)">0</b> hard</td>
+              <td><b style="color:var(--green)">Enforced at governance kernel.</b> Every document tagged. Out-of-region data refused at the gate.</td>
+              <td><b style="color:var(--green)">Same kernel.</b> Governance wraps the orchestrator. Identical enforcement.</td>
+            </tr>
+            <tr>
+              <td><b>Scope containment</b></td>
+              <td>Out-of-scope actions attempted</td>
+              <td><b style="color:var(--red)">0</b> hard</td>
+              <td><b style="color:var(--green)">Action allowlist.</b> Capabilities enumerated. "Send" not in the list.</td>
+              <td><b style="color:var(--amber)">Broader surface.</b> More agents = more capability interfaces to constrain. Each agent needs its own allowlist.</td>
+            </tr>
+            <tr>
+              <td><b>Auditability</b></td>
+              <td>Every decision traceable end-to-end</td>
+              <td>Full chain</td>
+              <td><b style="color:var(--green)">Linear DAG.</b> Append-only, hash-chained log. Each node produces one auditable output.</td>
+              <td><b style="color:var(--amber)">Branching traces.</b> Orchestrator decisions create variable-length traces. Audit log is richer but harder to read.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== RECOMMENDATION ===== -->
+      <div style="padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-top:4px">
+        <h4 style="font-size:13px;margin-bottom:8px">Recommendation</h4>
+        <p style="font-size:12px;color:var(--dim);line-height:1.65"><b style="color:var(--green)">Design A (Cascade) for v1.</b> The 100% recall constraint makes a fixed, testable pipeline safer than LLM-routed orchestration at launch. Every guardrail is structural, not behavioral.</p>
+        <p style="font-size:12px;color:var(--dim);line-height:1.65;margin-top:6px"><b style="color:var(--accent)">Evolve toward Design B</b> once 6+ months of labeled data from human decisions provides the eval coverage to trust orchestrator routing. Design B is more aligned with NovaOS's composable agent model and scales better when Shield expands to Horizons 2-3 (Design Gate, Budget Red Team).</p>
+      </div>
+
+      <p style="margin-top:16px;font-size:10.5px;color:var(--faint)">These designs are informed by agent orchestration patterns from production AI systems, adapted for Shield's domain constraints (100% recall, sovereign deployment, human-in-the-loop). Both designs share the same governance kernel, deterministic verification layer, and self-improving eval loop.</p>
+
+    </div><!-- end tab-agentic -->
+
   </div>
 </div>
 
@@ -989,7 +1240,7 @@ function togglePanel(){
 }
 function switchTopTab(tab){
   document.querySelectorAll('.top-tab').forEach((t,i)=>{
-    const tabs=['shield','enhanced','system','built'];
+    const tabs=['shield','enhanced','system','built','agentic'];
     t.classList.toggle('active',tabs[i]===tab);
   });
   document.querySelectorAll('.top-tab-content').forEach(c=>c.classList.remove('active'));
