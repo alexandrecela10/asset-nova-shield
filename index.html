@@ -318,10 +318,8 @@
 
 <div class="top-tabs">
   <div class="top-tab active" onclick="switchTopTab('shield')">Shield Demo</div>
-  <div class="top-tab" onclick="switchTopTab('enhanced')">Daily Risk Dashboard</div>
-  <div class="top-tab" onclick="switchTopTab('system')">System Design</div>
   <div class="top-tab" onclick="switchTopTab('built')">How This Was Built</div>
-  <div class="top-tab" onclick="switchTopTab('agentic')">Agentic Design</div>
+  <div class="top-tab" onclick="switchTopTab('system')">System Design</div>
 </div>
 
 <div class="layout" id="layout" style="position:relative">
@@ -615,7 +613,194 @@
         <div class="g"><b>Success = dollars protected</b>Scoreboard: $42.3M claim defended &middot; 0 deadlines missed &middot; 3 threats assessed this month.</div>
       </div>
     </div>
+    <!-- ==================== 2b: DAILY RISK DASHBOARD (OPTIONAL / UNDER EXPLORATION) ==================== -->
+    <div style="margin-top:24px;border:1px solid var(--purple);border-radius:12px;overflow:hidden">
+      <div onclick="document.getElementById('dashboard2b').style.display=document.getElementById('dashboard2b').style.display==='none'?'block':'none';this.querySelector('.toggle-arrow').textContent=document.getElementById('dashboard2b').style.display==='none'?'\u25B6':'\u25BC'" style="padding:14px 18px;background:rgba(157,122,247,.06);cursor:pointer;display:flex;align-items:center;gap:10px">
+        <span class="toggle-arrow" style="color:var(--purple);font-size:12px">&#9654;</span>
+        <span style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--purple);font-weight:700">2b &middot; Design exploration</span>
+        <span style="font-size:13px;font-weight:700;color:var(--txt)">Daily Risk Dashboard</span>
+        <span style="margin-left:auto;font-size:10px;color:var(--purple);background:rgba(157,122,247,.12);padding:2px 8px;border-radius:4px;font-weight:600">Under evaluation</span>
+      </div>
+      <div id="dashboard2b" style="display:none;padding:18px 18px 20px;background:var(--bg)">
+
+        <p style="font-size:12px;color:var(--dim);margin-bottom:16px">An alternative to the email-based daily review (step 2 above). Instead of an alert email, the contracts team opens a full risk dashboard every morning. This is a design exploration we would validate with contracts managers before building.</p>
+
+        <div class="ed-summary">
+          <div class="ed-stat">
+            <div class="val" style="color:var(--red)">1</div>
+            <div class="lbl">Active threats</div>
+            <div class="delta up">&#9650; +1 from yesterday</div>
+          </div>
+          <div class="ed-stat">
+            <div class="val" style="color:var(--amber)">2</div>
+            <div class="lbl">Monitored</div>
+            <div class="delta flat">&#9644; No change</div>
+          </div>
+          <div class="ed-stat">
+            <div class="val" style="color:var(--accent)">$48.7M</div>
+            <div class="lbl">Total exposure</div>
+            <div class="delta up">&#9650; +$42.3M (new threat)</div>
+          </div>
+          <div class="ed-stat">
+            <div class="val" style="color:var(--green)">$0</div>
+            <div class="lbl">Deadlines missed</div>
+            <div class="delta flat">&#9644; Clean record</div>
+          </div>
+        </div>
+
+        <table class="ed-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Exposure</th>
+              <th>Risk</th>
+              <th>Trend</th>
+              <th>Days to deadline</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>EV-047</b> Area 7 ground conditions<br><span style="font-size:10px;color:var(--faint)">Contractor claim forming — unexpected rock</span></td>
+              <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$42.3M</td>
+              <td><span class="ed-risk critical">Critical</span><div class="ed-bar"><div class="fill" style="width:92%;background:var(--red)"></div></div></td>
+              <td><span class="ed-trend up">&#9650;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">New</span></td>
+              <td style="color:var(--red);font-weight:700;font-family:var(--mono)">6 days</td>
+              <td><span style="color:var(--accent);font-weight:600;font-size:11px">Defense brief ready</span></td>
+            </tr>
+            <tr>
+              <td><b>EV-039</b> Compressor vendor delay<br><span style="font-size:10px;color:var(--faint)">Contractor may argue force majeure</span></td>
+              <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$4.1M</td>
+              <td><span class="ed-risk elevated">Elevated</span><div class="ed-bar"><div class="fill" style="width:55%;background:var(--amber)"></div></div></td>
+              <td><span class="ed-trend flat">&#9644;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">Stable</span></td>
+              <td style="color:var(--amber);font-family:var(--mono)">18 days</td>
+              <td><span style="color:var(--dim);font-size:11px">Monitoring</span></td>
+            </tr>
+            <tr>
+              <td><b>EV-034</b> PA-19 unbooked cost trend<br><span style="font-size:10px;color:var(--faint)">Costs in payment app not in change register</span></td>
+              <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$2.3M</td>
+              <td><span class="ed-risk elevated">Elevated</span><div class="ed-bar"><div class="fill" style="width:40%;background:var(--amber)"></div></div></td>
+              <td><span class="ed-trend down">&#9660;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">-$0.4M</span></td>
+              <td style="color:var(--dim);font-family:var(--mono)">No deadline</td>
+              <td><span style="color:var(--dim);font-size:11px">Monitoring</span></td>
+            </tr>
+            <tr>
+              <td><b>EV-028</b> Concrete batch test failures<br><span style="font-size:10px;color:var(--faint)">Resolved — contractor accepted responsibility</span></td>
+              <td style="font-family:var(--mono);color:var(--dim)">$0</td>
+              <td><span class="ed-risk low">Resolved</span><div class="ed-bar"><div class="fill" style="width:0%;background:var(--green)"></div></div></td>
+              <td><span class="ed-trend down">&#9660;</span><span style="font-size:10px;color:var(--green);margin-left:4px">Closed</span></td>
+              <td style="color:var(--dim);font-family:var(--mono)">&mdash;</td>
+              <td><span style="color:var(--green);font-size:11px">Defended</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px">
+            <h4 style="font-size:12px;color:var(--accent);margin-bottom:8px">What changed since yesterday</h4>
+            <ul style="list-style:none;padding:0;font-size:11.5px;color:var(--dim);line-height:1.8">
+              <li>&#8226; <b style="color:var(--txt)">New threat:</b> EV-047 detected from site report SR-1187 + correspondence C-1187</li>
+              <li>&#8226; <b style="color:var(--txt)">EV-034 exposure reduced:</b> $2.7M &rarr; $2.3M after contractor corrected PA-19</li>
+              <li>&#8226; <b style="color:var(--txt)">EV-028 closed:</b> Contractor accepted responsibility, no claim filed</li>
+            </ul>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px">
+            <h4 style="font-size:12px;color:var(--amber);margin-bottom:8px">Actions required today</h4>
+            <ul style="list-style:none;padding:0;font-size:11.5px;color:var(--dim);line-height:1.8">
+              <li>&#9888; <b style="color:var(--red)">Review EV-047 defense brief</b> &mdash; deadline in 6 days</li>
+              <li>&#8226; <b style="color:var(--txt)">Acknowledge EV-039 status</b> &mdash; no action needed yet</li>
+              <li>&#10003; <b style="color:var(--green)">EV-028 closed</b> &mdash; no action needed</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px">
+          <h4 style="font-size:12px;color:var(--green);margin-bottom:6px">Defense track record (project to date)</h4>
+          <div style="display:flex;gap:24px;font-size:12px;color:var(--dim)">
+            <span><b style="color:var(--txt);font-size:18px;font-family:var(--mono)">7</b> threats detected</span>
+            <span><b style="color:var(--green);font-size:18px;font-family:var(--mono)">4</b> defended successfully</span>
+            <span><b style="color:var(--amber);font-size:18px;font-family:var(--mono)">2</b> being monitored</span>
+            <span><b style="color:var(--red);font-size:18px;font-family:var(--mono)">1</b> active &mdash; action needed</span>
+            <span><b style="color:var(--green);font-size:18px;font-family:var(--mono)">$0</b> deadlines missed</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     </div><!-- end tab-shield -->
+
+    <!-- ==================== HOW THIS WAS BUILT TAB ==================== -->
+    <div class="top-tab-content" id="tab-built">
+
+      <div class="htb-section">
+        <h3>Case study artifacts &amp; the skills that produced them</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">Every artifact was produced using <b style="color:var(--txt)">PM OS</b>, a reusable operating system for product work. Each skill follows a consistent process: gather context, generate a first draft, review from multiple perspectives, iterate.</p>
+
+        <div class="htb-group">
+          <h4>Product Discovery</h4>
+          <ul class="htb-list">
+            <li><a href="../../context-library/research/Orbitron/cpm-agentic-ai-product-discovery.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Full Discovery Research</b></a> — 48 sources, 7 sections</li>
+            <li><a href="../../context-library/research/Orbitron/cpm-report-plainterms.html" target="_blank" style="color:var(--accent);text-decoration:none"><b>Discovery Report (Plain English)</b></a> — full report without jargon</li>
+            <li><a href="../../context-library/research/Orbitron/cpm-quotes-by-opportunity_2.html" target="_blank" style="color:var(--accent);text-decoration:none"><b>Validation Quotes by Opportunity</b></a> — sourced quotes mapped to personas and JTBD</li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Analysis</h4>
+          <ul class="htb-list">
+            <li><a href="../analyses/competitive-analysis-asset-nova-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Competitive Analysis</b></a> — SuperHive, Nodes &amp; Links, full landscape<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/competitor-analysis</code></li>
+            <li><a href="../analyses/impact-sizing-commercial-guardian-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Impact Sizing</b></a> — driver tree, three scenarios ($30-80M value, $10-12M ARR)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/impact-sizing</code></li>
+            <li><a href="../analyses/sub-agent-review-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Sub-Agent Review Synthesis</b></a> — 5-reviewer stress test, 12 findings<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/ralph-wiggum</code> <code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-review-panel</code></li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Product Specs</h4>
+          <ul class="htb-list">
+            <li><a href="../prds/commercial-guardian-solution-review.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Product PRD</b></a> — hypothesis, behavior contract, rollout plan, eval framework<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft</code></li>
+            <li><a href="../prds/ai-engineering-prd-commercial-guardian-agent-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>AI Engineering PRD</b></a> — DAG pipeline, governance kernel, eval suites<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft --ai</code></li>
+            <li><a href="../roadmaps/asset-nova-strategy-and-roadmap.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Strategy &amp; Roadmap</b></a> — thesis, wedge decision, 3-horizon plan<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/write-prod-strategy</code></li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Prototypes</h4>
+          <ul class="htb-list">
+            <li><b style="color:var(--txt)">Interactive prototype</b> — this demo (Shield Demo tab)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
+            <li><b style="color:var(--txt)">Agentic system design</b> — condensed in the System Design tab<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
+            <li><a href="commercial_guardian_agent/" target="_blank" style="color:var(--accent);text-decoration:none"><b>Eval Harness &amp; Governance Kernel</b></a> — runnable code with synthetic data</li>
+          </ul>
+        </div>
+
+        <div class="htb-group">
+          <h4>Context</h4>
+          <ul class="htb-list">
+            <li><a href="../analyses/orbitron-context-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Orbitron Context Synthesis</b></a> — product lineup, founder philosophy, platform implications</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="htb-section">
+        <h3>PM OS — the system behind this case study</h3>
+        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">PM OS is a reusable operating system for product management work. 41 AI-assisted skills covering the full PM lifecycle, from discovery through launch. Here are the ones used for this case study:</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="htb-skill"><code>/prd-draft</code><span>Product PRD with hypothesis, behavior contract, rollout plan</span></div>
+          <div class="htb-skill"><code>/impact-sizing</code><span>4-step framework: usage funnel, impact calc, assumptions, takeaways</span></div>
+          <div class="htb-skill"><code>/competitor-analysis</code><span>Competitive landscape mapping with positioning</span></div>
+          <div class="htb-skill"><code>/ralph-wiggum</code><span>Devil's advocate review — catches what you don't want to hear</span></div>
+          <div class="htb-skill"><code>/prd-review-panel</code><span>Multi-perspective review: engineer, designer, exec, legal, customer</span></div>
+          <div class="htb-skill"><code>/prototype</code><span>Interactive prototypes generated from PRD specs</span></div>
+          <div class="htb-skill"><code>/write-prod-strategy</code><span>Strategy thesis, wedge decision, multi-horizon roadmap</span></div>
+        </div>
+
+        <p style="font-size:11px;color:var(--faint);margin-top:12px">Other available skills not used here: <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/daily-plan</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/meeting-notes</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/user-interview</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/experiment-decision</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/launch-checklist</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/feature-metrics</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/journey-map</code> and 34 more.</p>
+
+        <div class="htb-callout"><b>The skills compound.</b> Discovery research feeds impact sizing. Impact sizing feeds the PRD. The PRD feeds the prototype. The review panel catches gaps. Each output is the input for the next. This isn't a one-off case study process — it's how I work on every product problem.</div>
+      </div>
+
+    </div><!-- end tab-built -->
 
     <!-- ==================== SYSTEM DESIGN TAB ==================== -->
     <div class="top-tab-content" id="tab-system">
@@ -801,192 +986,13 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
         </table>
       </div>
 
-    </div><!-- end tab-system -->
-
-    <!-- ==================== HOW THIS WAS BUILT TAB ==================== -->
-    <div class="top-tab-content" id="tab-built">
-
-      <div class="htb-section">
-        <h3>Case study artifacts &amp; the skills that produced them</h3>
-        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">Every artifact was produced using <b style="color:var(--txt)">PM OS</b>, a reusable operating system for product work. Each skill follows a consistent process: gather context, generate a first draft, review from multiple perspectives, iterate.</p>
-
-        <div class="htb-group">
-          <h4>Product Discovery</h4>
-          <ul class="htb-list">
-            <li><a href="../../context-library/research/Orbitron/cpm-agentic-ai-product-discovery.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Full Discovery Research</b></a> — 48 sources, 7 sections</li>
-            <li><a href="../../context-library/research/Orbitron/cpm-report-plainterms.html" target="_blank" style="color:var(--accent);text-decoration:none"><b>Discovery Report (Plain English)</b></a> — full report without jargon</li>
-            <li><a href="../../context-library/research/Orbitron/cpm-quotes-by-opportunity_2.html" target="_blank" style="color:var(--accent);text-decoration:none"><b>Validation Quotes by Opportunity</b></a> — sourced quotes mapped to personas and JTBD</li>
-          </ul>
+      <!-- ==================== AGENTIC DESIGN EXPLORATION (within System Design) ==================== -->
+      <div style="margin-top:28px;border:2px solid var(--purple);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;background:rgba(157,122,247,.08);display:flex;align-items:center;gap:10px">
+          <span style="font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--purple);font-weight:700">Agentic Design Exploration</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--purple);background:rgba(157,122,247,.15);padding:3px 10px;border-radius:4px;font-weight:700">In research &amp; testing</span>
         </div>
-
-        <div class="htb-group">
-          <h4>Analysis</h4>
-          <ul class="htb-list">
-            <li><a href="../analyses/competitive-analysis-asset-nova-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Competitive Analysis</b></a> — SuperHive, Nodes &amp; Links, full landscape<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/competitor-analysis</code></li>
-            <li><a href="../analyses/impact-sizing-commercial-guardian-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Impact Sizing</b></a> — driver tree, three scenarios ($30-80M value, $10-12M ARR)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/impact-sizing</code></li>
-            <li><a href="../analyses/sub-agent-review-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Sub-Agent Review Synthesis</b></a> — 5-reviewer stress test, 12 findings<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/ralph-wiggum</code> <code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-review-panel</code></li>
-          </ul>
-        </div>
-
-        <div class="htb-group">
-          <h4>Product Specs</h4>
-          <ul class="htb-list">
-            <li><a href="../prds/commercial-guardian-solution-review.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Product PRD</b></a> — hypothesis, behavior contract, rollout plan, eval framework<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft</code></li>
-            <li><a href="../prds/ai-engineering-prd-commercial-guardian-agent-2026-08-26.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>AI Engineering PRD</b></a> — DAG pipeline, governance kernel, eval suites<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prd-draft --ai</code></li>
-            <li><a href="../roadmaps/asset-nova-strategy-and-roadmap.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Strategy &amp; Roadmap</b></a> — thesis, wedge decision, 3-horizon plan<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/write-prod-strategy</code></li>
-          </ul>
-        </div>
-
-        <div class="htb-group">
-          <h4>Prototypes</h4>
-          <ul class="htb-list">
-            <li><b style="color:var(--txt)">Interactive prototype</b> — this demo (Shield Demo tab)<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
-            <li><b style="color:var(--txt)">Agentic system design</b> — condensed in the System Design tab<br><code style="font-family:var(--mono);font-size:10px;color:var(--purple);background:#1e1535;padding:1px 6px;border-radius:4px;margin-top:4px;display:inline-block">/prototype</code></li>
-            <li><a href="commercial_guardian_agent/" target="_blank" style="color:var(--accent);text-decoration:none"><b>Eval Harness &amp; Governance Kernel</b></a> — runnable code with synthetic data</li>
-          </ul>
-        </div>
-
-        <div class="htb-group">
-          <h4>Context</h4>
-          <ul class="htb-list">
-            <li><a href="../analyses/orbitron-context-synthesis.md" target="_blank" style="color:var(--accent);text-decoration:none"><b>Orbitron Context Synthesis</b></a> — product lineup, founder philosophy, platform implications</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="htb-section">
-        <h3>PM OS — the system behind this case study</h3>
-        <p style="font-size:12.5px;color:var(--dim);margin-bottom:14px">PM OS is a reusable operating system for product management work. 41 AI-assisted skills covering the full PM lifecycle, from discovery through launch. Here are the ones used for this case study:</p>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="htb-skill"><code>/prd-draft</code><span>Product PRD with hypothesis, behavior contract, rollout plan</span></div>
-          <div class="htb-skill"><code>/impact-sizing</code><span>4-step framework: usage funnel, impact calc, assumptions, takeaways</span></div>
-          <div class="htb-skill"><code>/competitor-analysis</code><span>Competitive landscape mapping with positioning</span></div>
-          <div class="htb-skill"><code>/ralph-wiggum</code><span>Devil's advocate review — catches what you don't want to hear</span></div>
-          <div class="htb-skill"><code>/prd-review-panel</code><span>Multi-perspective review: engineer, designer, exec, legal, customer</span></div>
-          <div class="htb-skill"><code>/prototype</code><span>Interactive prototypes generated from PRD specs</span></div>
-          <div class="htb-skill"><code>/write-prod-strategy</code><span>Strategy thesis, wedge decision, multi-horizon roadmap</span></div>
-        </div>
-
-        <p style="font-size:11px;color:var(--faint);margin-top:12px">Other available skills not used here: <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/daily-plan</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/meeting-notes</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/user-interview</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/experiment-decision</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/launch-checklist</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/feature-metrics</code> <code style="font-family:var(--mono);font-size:10px;color:var(--faint)">/journey-map</code> and 34 more.</p>
-
-        <div class="htb-callout"><b>The skills compound.</b> Discovery research feeds impact sizing. Impact sizing feeds the PRD. The PRD feeds the prototype. The review panel catches gaps. Each output is the input for the next. This isn't a one-off case study process — it's how I work on every product problem.</div>
-      </div>
-
-    </div><!-- end tab-built -->
-
-    <div class="top-tab-content" id="tab-enhanced">
-
-      <div class="ed-banner">&#9888; This design is under evaluation — not locked. We are validating with users and stakeholders.</div>
-
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:4px">Daily Claims Defense Dashboard</h3>
-      <p style="font-size:12px;color:var(--dim);margin-bottom:16px">An enhanced daily view for the contracts team. Every morning, this dashboard shows the full risk picture: what's active, what changed, and where to focus.</p>
-
-      <div class="ed-summary">
-        <div class="ed-stat">
-          <div class="val" style="color:var(--red)">1</div>
-          <div class="lbl">Active threats</div>
-          <div class="delta up">&#9650; +1 from yesterday</div>
-        </div>
-        <div class="ed-stat">
-          <div class="val" style="color:var(--amber)">2</div>
-          <div class="lbl">Monitored</div>
-          <div class="delta flat">&#9644; No change</div>
-        </div>
-        <div class="ed-stat">
-          <div class="val" style="color:var(--accent)">$48.7M</div>
-          <div class="lbl">Total exposure</div>
-          <div class="delta up">&#9650; +$42.3M (new threat)</div>
-        </div>
-        <div class="ed-stat">
-          <div class="val" style="color:var(--green)">$0</div>
-          <div class="lbl">Deadlines missed</div>
-          <div class="delta flat">&#9644; Clean record</div>
-        </div>
-      </div>
-
-      <table class="ed-table">
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Exposure</th>
-            <th>Risk</th>
-            <th>Trend</th>
-            <th>Days to deadline</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><b>EV-047</b> Area 7 ground conditions<br><span style="font-size:10px;color:var(--faint)">Contractor claim forming — unexpected rock</span></td>
-            <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$42.3M</td>
-            <td><span class="ed-risk critical">Critical</span><div class="ed-bar"><div class="fill" style="width:92%;background:var(--red)"></div></div></td>
-            <td><span class="ed-trend up">&#9650;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">New</span></td>
-            <td style="color:var(--red);font-weight:700;font-family:var(--mono)">6 days</td>
-            <td><span style="color:var(--accent);font-weight:600;font-size:11px">Defense brief ready</span></td>
-          </tr>
-          <tr>
-            <td><b>EV-039</b> Compressor vendor delay<br><span style="font-size:10px;color:var(--faint)">Contractor may argue force majeure</span></td>
-            <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$4.1M</td>
-            <td><span class="ed-risk elevated">Elevated</span><div class="ed-bar"><div class="fill" style="width:55%;background:var(--amber)"></div></div></td>
-            <td><span class="ed-trend flat">&#9644;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">Stable</span></td>
-            <td style="color:var(--amber);font-family:var(--mono)">18 days</td>
-            <td><span style="color:var(--dim);font-size:11px">Monitoring</span></td>
-          </tr>
-          <tr>
-            <td><b>EV-034</b> PA-19 unbooked cost trend<br><span style="font-size:10px;color:var(--faint)">Costs in payment app not in change register</span></td>
-            <td style="font-family:var(--mono);color:var(--txt);font-weight:600">$2.3M</td>
-            <td><span class="ed-risk elevated">Elevated</span><div class="ed-bar"><div class="fill" style="width:40%;background:var(--amber)"></div></div></td>
-            <td><span class="ed-trend down">&#9660;</span><span style="font-size:10px;color:var(--dim);margin-left:4px">-$0.4M</span></td>
-            <td style="color:var(--dim);font-family:var(--mono)">No deadline</td>
-            <td><span style="color:var(--dim);font-size:11px">Monitoring</span></td>
-          </tr>
-          <tr>
-            <td><b>EV-028</b> Concrete batch test failures<br><span style="font-size:10px;color:var(--faint)">Resolved — contractor accepted responsibility</span></td>
-            <td style="font-family:var(--mono);color:var(--dim)">$0</td>
-            <td><span class="ed-risk low">Resolved</span><div class="ed-bar"><div class="fill" style="width:0%;background:var(--green)"></div></div></td>
-            <td><span class="ed-trend down">&#9660;</span><span style="font-size:10px;color:var(--green);margin-left:4px">Closed</span></td>
-            <td style="color:var(--dim);font-family:var(--mono)">—</td>
-            <td><span style="color:var(--green);font-size:11px">Defended</span></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px">
-          <h4 style="font-size:12px;color:var(--accent);margin-bottom:8px">What changed since yesterday</h4>
-          <ul style="list-style:none;padding:0;font-size:11.5px;color:var(--dim);line-height:1.8">
-            <li>&#8226; <b style="color:var(--txt)">New threat:</b> EV-047 detected from site report SR-1187 + correspondence C-1187</li>
-            <li>&#8226; <b style="color:var(--txt)">EV-034 exposure reduced:</b> $2.7M → $2.3M after contractor corrected PA-19</li>
-            <li>&#8226; <b style="color:var(--txt)">EV-028 closed:</b> Contractor accepted responsibility, no claim filed</li>
-          </ul>
-        </div>
-        <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px">
-          <h4 style="font-size:12px;color:var(--amber);margin-bottom:8px">Actions required today</h4>
-          <ul style="list-style:none;padding:0;font-size:11.5px;color:var(--dim);line-height:1.8">
-            <li>&#9888; <b style="color:var(--red)">Review EV-047 defense brief</b> — deadline in 6 days</li>
-            <li>&#8226; <b style="color:var(--txt)">Acknowledge EV-039 status</b> — no action needed yet</li>
-            <li>&#10003; <b style="color:var(--green)">EV-028 closed</b> — no action needed</li>
-          </ul>
-        </div>
-      </div>
-
-      <div style="margin-top:20px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px">
-        <h4 style="font-size:12px;color:var(--green);margin-bottom:6px">Defense track record (project to date)</h4>
-        <div style="display:flex;gap:24px;font-size:12px;color:var(--dim)">
-          <span><b style="color:var(--txt);font-size:18px;font-family:var(--mono)">7</b> threats detected</span>
-          <span><b style="color:var(--green);font-size:18px;font-family:var(--mono)">4</b> defended successfully</span>
-          <span><b style="color:var(--amber);font-size:18px;font-family:var(--mono)">2</b> being monitored</span>
-          <span><b style="color:var(--red);font-size:18px;font-family:var(--mono)">1</b> active — action needed</span>
-          <span><b style="color:var(--green);font-size:18px;font-family:var(--mono)">$0</b> deadlines missed</span>
-        </div>
-      </div>
-
-      <p style="margin-top:16px;font-size:10.5px;color:var(--faint)">This enhanced design shows how the daily review email (Shield Demo, step 2) could evolve into a full risk dashboard. The simple alert-based flow remains the MVP. This version is a design exploration we would validate with contracts managers before building.</p>
-
-    </div><!-- end tab-enhanced -->
-
-    <div class="top-tab-content" id="tab-agentic">
+        <div style="padding:20px 18px;background:var(--bg)">
 
       <div class="ad-banner">&#9888; In research and testing phase — these designs are under evaluation, not finalized</div>
 
@@ -1202,7 +1208,10 @@ DRAFT: JGX-OWN-0047 (every sentence cited)</pre>
 
       <p style="margin-top:16px;font-size:10.5px;color:var(--faint)">These designs are informed by agent orchestration patterns from production AI systems, adapted for Shield's domain constraints (100% recall, sovereign deployment, human-in-the-loop). Both designs share the same governance kernel, deterministic verification layer, and self-improving eval loop.</p>
 
-    </div><!-- end tab-agentic -->
+        </div>
+      </div>
+
+    </div><!-- end tab-system -->
 
   </div>
 </div>
@@ -1240,7 +1249,7 @@ function togglePanel(){
 }
 function switchTopTab(tab){
   document.querySelectorAll('.top-tab').forEach((t,i)=>{
-    const tabs=['shield','enhanced','system','built','agentic'];
+    const tabs=['shield','built','system'];
     t.classList.toggle('active',tabs[i]===tab);
   });
   document.querySelectorAll('.top-tab-content').forEach(c=>c.classList.remove('active'));
@@ -1300,7 +1309,7 @@ function closeBrief(){
 // Hash-based tab routing
 (function(){
   var h=location.hash.replace('#','');
-  if(h==='system'||h==='built'||h==='enhanced') switchTopTab(h);
+  if(h==='system'||h==='built') switchTopTab(h);
 })();
 </script>
 </body>
