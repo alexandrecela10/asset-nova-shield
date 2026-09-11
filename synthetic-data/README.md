@@ -3,8 +3,8 @@
 Illustrative, fully synthetic project record for event EV-047 (Area 7 differing
 site conditions) on the Jubail Gas Processing Expansion, EPC Package 3. These
 are the inputs the agent "reads" in the walkthrough deck
-(`../agent-walkthrough-deck.html`) and the live demo
-(`../commercial-guardian-demo.html`).
+(`../artifacts/decks/agent-walkthrough-deck.html`) and the live demo
+(`../index.html`).
 
 | File | Simulates | System of record |
 |---|---|---|

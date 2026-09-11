@@ -31,10 +31,11 @@ These are reading problems, not judgment problems. AI solves them.
 index.html                          Live prototype (GitHub Pages)
 aramco-pitch-deck.html              External pitch deck (owner audience)
 orbitron-cto-pitch-deck.html        Internal pitch deck (CTO audience)
-agent-walkthrough-deck.html         Step-by-step agent walkthrough
-asset-nova-shield-deck.html         Product overview deck
 
 artifacts/
+  decks/
+    agent-walkthrough-deck.html     Step-by-step agent walkthrough
+    asset-nova-shield-deck.html     Product overview deck
   research/                         Discovery research, industry reports, user quotes
   analyses/                         Impact sizing, competitive analysis, context synthesis
   prds/                             Product PRD + AI engineering PRD
